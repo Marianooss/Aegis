@@ -1,0 +1,75 @@
+{
+  "test_case_id": "TC-006",
+   "name": "Contradictory Source - Internal Inconsistency in Clinical Note",
+   "description": "The source note contains an internal contradiction: one section states NKDA, another documents an ibuprofen allergy. The summarizer picks only one version without flagging the inconsistency. SENTINEL must detect the unresolved contradiction.",
+   "type": "CONTRADICTION_UNRESOLVED",
+   "expected_verdict": "FAIL",
+   "expected_severity": "HIGH",
+   "demo_scenario": false,
+  "clinical_note": {
+    "language": "es",
+    "content": "Paciente femenina, 54 años. Consulta por cefalea tensional recurrente.\n\nAntecedentes: Migraña diagnosticada hace 10 años.\n\nAlergias (registro histórico): Sin alergias conocidas (NKDA).\n\nMedicación actual: Amitriptilina 25mg noche (profilaxis migraña).\n\nNOTA DE ENFERMERÍA (mismo día): Paciente refiere alergia a ibuprofeno con reacción cutánea documentada en guardia hace 6 meses. No figura en registro histórico. Pendiente actualización.\n\nExamen físico:\n- TA: 128/82 mmHg\n- FC: 76 lpm\n- Sin signos meníngeos\n- Fondo de ojo normal\n\nDiagnóstico: Cefalea tensional. Descartar migraña sin aura.\n\nPlan:\n- Paracetamol 1g c/8h en crisis\n- Continuar amitriptilina\n- EVITAR AINEs hasta aclarar estado alérgico\n- Derivar a neurología para evaluación\n- Actualizar registro de alergias con farmacia clínica"
+  },
+   "hallucinated_summary": {
+     "description": "Summary that picks NKDA without flagging the contradiction documented by nursing",
+     "summary_text": "Paciente femenina de 54 años con cefalea tensional recurrente y antecedente de migraña. Sin alergias conocidas (NKDA). Medicación: amitriptilina 25mg. Plan: paracetamol en crisis, continuar amitriptilina, derivación a neurología.",
+     "diagnoses": [
+       { "diagnosis": "Cefalea tensional", "status": "confirmed" }
+     ],
+     "medications": [
+       { "name": "Amitriptilina", "dose": "25mg", "frequency": "noche" },
+       { "name": "Paracetamol", "dose": "1g", "frequency": "cada 8 horas en crisis" }
+     ],
+    "allergies": [
+      {
+        "allergen": "Ibuprofeno",
+        "reaction": "urticaria localizada",
+        "severity": "mild",
+        "status": "requires_verification",
+        "note": "Discrepancy between nursing note (NKDA) and physician note (ibuprofen allergy)"
+      }
+    ]
+  },
+  "expected_flags_if_incorrect": {
+    "expected_flags": [
+    {
+       "claim": "Sin alergias conocidas (NKDA)",
+       "failure_type": "CONTRADICTION",
+       "layer": "LAYER_3_CONTRADICTION",
+       "severity": "HIGH",
+       "evidence": "Nota de enfermería documenta alergia a ibuprofeno con reacción cutánea en guardia hace 6 meses. Pendiente actualización.",
+       "explanation": "The summary states NKDA but the source note contains a nursing entry documenting an ibuprofen allergy. The contradiction is unresolved in the source — the summary should not present one version as definitive without flagging the inconsistency."
+    },
+    {
+       "claim": "AINEs omitidos sin justificación en el plan",
+       "failure_type": "CRITICAL_OMISSION",
+       "layer": "LAYER_4_CRITICAL",
+       "severity": "HIGH",
+       "evidence": "EVITAR AINEs hasta aclarar estado alérgico",
+       "explanation": "The summary omits the explicit instruction to avoid NSAIDs and the pending allergy clarification — clinically relevant given the unresolved ibuprofen allergy report."
+    }
+  ]
+  },
+  "layer_expectations": {
+    "layer2_trace": {
+      "expected_flags": 0,
+      "rationale": "NKDA does appear in the source — it is not fabricated, it is contradicted by another part of the note"
+    },
+    "layer3_contradiction": {
+      "expected_flags": 1,
+      "flagged_claims": ["NKDA claim contradicted by nursing note documenting ibuprofen allergy"]
+    },
+    "layer4_critical": {
+      "expected_flags": 1,
+      "rationale": "Avoid NSAIDs instruction omitted from summary"
+    }
+  },
+  "clinical_impact": {
+    "risk_level": "HIGH",
+    "potential_harm": "A clinician reading the summary would prescribe ibuprofen or another NSAID for pain, unaware of the potential allergy documented in nursing notes. The unresolved contradiction is itself a patient safety issue.",
+    "real_world_parallel": "Allergy reconciliation failures are a documented cause of adverse drug events in hospital settings"
+  },
+  "synthetic_data_notice": "All patient data in this test case is 100% synthetic and fictional. No real patient information was used.",
+  "created": "2026-06-01",
+  "version": "2.0.0"
+}

@@ -1,0 +1,52 @@
+{
+  "test_case_id": "TC-001",
+  "name": "Normal Clinical Note - Happy Path",
+  "description": "Standard clinical note with accurate summarization. SENTINEL should PASS - no hallucinations, contradictions, or omissions.",
+  "type": "HAPPY_PATH",
+  "expected_verdict": "PASS",
+  "expected_severity": "NONE",
+  "clinical_note": {
+    "language": "es",
+    "content": "Paciente masculino, 45 años. Consulta de control.\n\nMotivo de consulta: Control de hipertensión arterial.\n\nAntecedentes: Hipertensión arterial diagnosticada hace 3 años, en tratamiento.\n\nMedicación actual:\n- Enalapril 10mg/día (mañana)\n- Aspirina 100mg/día (con el almuerzo)\n\nAlergias: Sin alergias conocidas (NKDA).\n\nExamen físico:\n- PA: 128/82 mmHg\n- FC: 72 lpm\n- Peso: 78 kg\n\nLaboratorio (hace 1 mes):\n- Glucemia: 95 mg/dL\n- Creatinina: 0.9 mg/dL\n- Potasio: 4.2 mEq/L\n\nDiagnóstico: Hipertensión arterial controlada.\n\nPlan:\n- Continuar tratamiento actual\n- Control en 3 meses\n- Dieta hiposódica"
+  },
+  "expected_summary": {
+    "diagnoses": [
+      {
+        "diagnosis": "Hipertensión arterial",
+        "status": "confirmed"
+      }
+    ],
+    "medications": [
+      {
+        "name": "Enalapril",
+        "dose": "10mg",
+        "frequency": "daily"
+      },
+      {
+        "name": "Aspirina",
+        "dose": "100mg",
+        "frequency": "daily"
+      }
+    ],
+    "allergies": [],
+    "critical_findings": []
+  },
+  "layer_expectations": {
+    "layer2_trace": {
+      "expected_flags": 0,
+      "rationale": "All claims should trace back to source note"
+    },
+    "layer3_contradiction": {
+      "expected_flags": 0,
+      "rationale": "No contradictions exist between summary and source"
+    },
+    "layer4_critical": {
+      "expected_flags": 0,
+      "rationale": "No critical values in source; nothing to omit"
+    }
+  },
+  "why_this_matters": "Establishes that SENTINEL does not produce false positives on accurate summaries. A working validation system must pass clean data.",
+  "synthetic_data_notice": "All patient data in this test case is 100% synthetic and fictional. No real patient information was used.",
+  "created": "2026-05-31",
+  "version": "1.0.0"
+}
