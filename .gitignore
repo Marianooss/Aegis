@@ -29,4 +29,18 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts.claude/
+next-env.d.ts
+
+# next.js boilerplate (not used in SENTINEL — UiPath-only per ADR-001)
+/app/
+/components/
+/hooks/
+/lib/
+/styles/
+next.config.mjs
+components.json
+postcss.config.mjs
+tsconfig.json
+
+# captured terminal output
+captured-terminal-output.txt
