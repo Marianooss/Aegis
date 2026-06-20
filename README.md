@@ -297,6 +297,61 @@ Aegis/
 
 ---
 
+## Agent Type
+
+SENTINEL uses **Low-code Agents** built entirely in UiPath Agent Builder (no custom code agents). The validation logic is implemented through structured natural language prompts within the Agent Builder environment. `aggregator.js` is a reference implementation of the severity matrix used for documentation and local testing only — the deployed agents implement equivalent logic natively in their prompts.
+
+---
+
+## Setup Instructions for Judges
+
+### Prerequisites
+- Access to UiPath Automation Cloud (staging environment)
+- UiPath tenant: `hackathon26_409` at staging.uipath.com
+- Anthropic Claude API key configured in UiPath Orchestrator as a credential asset
+
+### Running SENTINEL Validator (Agent 2 — Solution 6)
+
+1. Navigate to [staging.uipath.com/hackathon26_409](https://staging.uipath.com/hackathon26_409)
+2. Go to **Agent Builder** → **Deployed Agents** → **Solution 6 — SENTINEL Validator**
+3. Click **Run now**
+4. Provide the following inputs:
+
+```json
+{
+  "clinical_note": "<paste any clinical note>",
+  "ai_summary": "<paste the AI-generated summary to validate>",
+  "escalation_threshold": "MEDIUM"
+}
+```
+
+5. The agent returns a structured JSON verdict. Expected output for TC-002 (allergy hallucination):
+
+```json
+{
+  "verdict": "FAIL",
+  "overall_severity": "CRITICAL",
+  "escalate_to_human": true,
+  "breakdown": { "hallucinations": 2, "contradictions": 1, "critical_omissions": 1 }
+}
+```
+
+### Running the Full Two-Agent Pipeline
+
+1. Run **Solution 7 — MedicalRecordsSummarizer** first with a raw clinical note → copy the `ai_summary` output
+2. Run **Solution 6 — SENTINEL Validator** with the original note + the ai_summary
+3. Review the verdict, flagged_claims, and escalation decision
+
+### Test Cases
+
+Pre-built test scenarios are in `/test-scenarios/`. Use `TC-002-allergy-hallucination.json` for the primary demo — it contains the clinical_note, the hallucinated summary, and the expected SENTINEL output.
+
+### Maestro BPMN (Solution 8)
+
+The Maestro orchestration layer is fully built and validated (0 issues). Due to a known UiPath staging platform bug (June 2026), automatic publish is blocked. The BPMN file is available at `maestro/Process.bpmn`. See the [community thread](https://forum.uipath.com/t/studio-web-solution-that-contains-maestro-flow-has-a-deploy-bug/5754068) for context.
+
+---
+
 ## Why This Matters
 
 Clinical AI summarization is already in production in healthcare systems worldwide. The failures SENTINEL detects are not hypothetical:
