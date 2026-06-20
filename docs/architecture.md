@@ -1,11 +1,11 @@
-# SENTINEL Architecture
-> Technical documentation for the SENTINEL validation system
+# Aegis Architecture
+> Technical documentation for the Aegis validation system
 
 ---
 
 ## System Overview
 
-SENTINEL is a two-agent pipeline designed to validate AI-generated medical summaries
+Aegis is a two-agent pipeline designed to validate AI-generated medical summaries
 before they reach clinical use. It addresses the core risk of AI-infused healthcare
 automation: models can be wrong in ways that look fluent, complete, and plausible.
 
@@ -21,8 +21,8 @@ automation: models can be wrong in ways that look fluent, complete, and plausibl
 │  ┌─────────────┐                                                              │
 │  │  TEST CLOUD │                                                              │
 │  │  ──────────  │                                                              │
-│  │  6 synthetic │                                                              │
-│  │  test cases  │                                                              │
+│  │  7 synthetic │                                                              │
+│  │  test cases  │  (incl. TC-007 from generator)                                                              │
 │  └──────┬──────┘                                                              │
 │         │ clinical_note                                                       │
 │         ▼                                                                     │
@@ -94,7 +94,7 @@ automation: models can be wrong in ways that look fluent, complete, and plausibl
 │  │  │              │  L3+L4 flags  │                                 │  │  │  │
 │  │  │              │               │                                 │  │  │  │
 │  │  │              │  Output:      │                                 │  │  │  │
-│  │  │              │  - verdict    │                                 │  │  │  │
+│  │  │              │  - verdict    │  (FAIL → Correction + Re-validate)│  │  │  │
 │  │  │              │  - severity   │                                 │  │  │  │
 │  │  │              │  - escalate?  │                                 │  │  │  │
 │  │  │              └───────┬───────┘                                 │  │  │  │
@@ -134,7 +134,7 @@ automation: models can be wrong in ways that look fluent, complete, and plausibl
 │                              ┌──────────────────────┐                     │
 │                              │   COVERAGE REPORT    │                     │
 │                              │   ───────────────    │                     │
-│                              │   6/6 scenarios run  │                     │
+│                              │   7/7 scenarios run  │                     │
 │                              │   Pass rate: X%      │                     │
 │                              │   Escalated: Y       │                     │
 │                              └──────────────────────┘                     │
@@ -311,6 +311,56 @@ Output:
 
 ---
 
+## Pipeline Extensions
+
+### Scenario Generator
+
+**Purpose:** Generate new clinically-plausible test cases from a plain-English requirement string.
+
+**Location:** `src/core/scenario-generator.js`
+
+**How it works:**
+- Reads existing TC-001..TC-006 as few-shot examples
+- Calls Claude with the examples + new requirement (e.g. "Pediatric patient, 8 years old, asthma emergency")
+- Claude returns a complete JSON test scenario with:
+  - `clinical_note` (source text)
+  - `flawed_summary` or `expected_summary`
+  - `expected_verdict`, `expected_severity`, `expected_flags`
+  - `failure_modes[]` with layer, severity, and explanation
+
+**First generated case:** TC-007 — Pediatric Asthma Attack (5 flags, CRITICAL)
+
+---
+
+### Correction Loop
+
+**Purpose:** If the Aggregator returns `verdict: FAIL`, automatically fix the summary and re-validate.
+
+**Flow:**
+```
+AGGREGATOR ──▶ verdict: FAIL?
+                    │
+                    ▼ YES
+           ┌──────────────┐
+           │ CORRECTION   │  Claude fixes only flagged claims
+           │   AGENT      │  No new information introduced
+           └──────┬───────┘
+                  │ corrected_summary
+                  ▼
+           ┌──────────────┐
+           │ RE-VALIDATE  │  Run monolithic SENTINEL prompt
+           │   (fast)     │  on corrected text
+           └──────┬───────┘
+                  │ revalidation_verdict
+                  ▼
+           PASS ──▶ Auto-approve (TC-001..006)
+           FAIL ──▶ Escalate to human (TC-005)
+```
+
+**Location:** `src/agents/correction.js` + inline re-validation in `src/core/pipeline.js`
+
+---
+
 ## Security Considerations
 
 1. **No real patient data**: All test scenarios use 100% synthetic clinical notes
@@ -335,5 +385,5 @@ Layers 2, 3, and 4 can run in parallel to reduce total latency to ~15-20s.
 
 ---
 
-*Architecture v0.1.0 — SENTINEL*
+*Architecture v0.3.0 — AEGIS*
 *UiPath AgentHack 2026*
