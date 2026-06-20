@@ -1,4 +1,4 @@
-﻿{
+{
   "test_case_id": "TC-006",
    "name": "Contradictory Source - Internal Inconsistency in Clinical Note",
    "description": "The source note contains an internal contradiction: one section states NKDA, another documents an ibuprofen allergy. The summarizer picks only one version without flagging the inconsistency. SENTINEL must detect the unresolved contradiction.",
