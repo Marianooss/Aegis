@@ -150,6 +150,8 @@ header{position:relative;z-index:10;display:flex;align-items:center;justify-cont
 .log-sev{padding:1px 7px;border-radius:20px;font-size:8px;}
 .spinner{display:inline-block;width:9px;height:9px;border:1px solid var(--dim2);border-top-color:var(--teal);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:4px;}
 @keyframes spin{to{transform:rotate(360deg)}}
+.exp-btn{width:100%;padding:10px;background:transparent;color:var(--teal);border:1px solid rgba(0,229,204,.35);border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:3px;cursor:pointer;transition:all .2s;}
+.exp-btn:hover{background:rgba(0,229,204,.07);border-color:var(--teal);}
 ::-webkit-scrollbar{width:3px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--dim2);border-radius:2px;}
@@ -213,6 +215,10 @@ header{position:relative;z-index:10;display:flex;align-items:center;justify-cont
         <div class="db dafter"><div class="dlabel">AFTER (CORRECTED)</div><div id="dafter"></div></div>
       </div>
     </div>
+
+    <div class="rsec" id="exsec">
+      <button class="exp-btn" onclick="exportResult()">↓ EXPORT FULL RESULT</button>
+    </div>
   </div>
 
   <div class="rp">
@@ -254,9 +260,11 @@ const SCENARIOS=[
   {id:'TC-004',name:'Medication Fabrication',cls:'th',tag:'HIGH'},
   {id:'TC-005',name:'Critical Value Omission K⁺6.8',cls:'tc',tag:'CRITICAL'},
   {id:'TC-006',name:'Contradictory Source Note',cls:'th',tag:'HIGH'},
+  {id:'TC-007',name:'Pediatric Asthma — Discharge Hallucination',cls:'tc',tag:'CRITICAL'},
 ];
 let sel='TC-002',running=false;
 let S={tot:0,app:0,fix:0,esc:0};
+let lastResult=null;
 
 function renderList(){
   document.getElementById('sc-list').innerHTML=SCENARIOS.map(s=>\`
@@ -279,7 +287,36 @@ function reset(){
   document.getElementById('vbanner').style.display='none';
   document.getElementById('fsec').style.display='none';
   document.getElementById('dsec').style.display='none';
+  document.getElementById('exsec').style.display='none';
   document.getElementById('flist').innerHTML='';
+  lastResult=null;
+}
+
+function exportResult(){
+  if(!lastResult)return;
+  const sc=SCENARIOS.find(s=>s.id===lastResult.scenario_id);
+  const payload={
+    aegis_export:{
+      scenario_id:lastResult.scenario_id,
+      scenario_name:lastResult.scenario_name,
+      exported_at:lastResult.exported_at,
+      verdict:lastResult.pipeline_result.sentinel?.verdict||'—',
+      overall_severity:lastResult.pipeline_result.sentinel?.overall_severity||'—',
+      escalated:lastResult.pipeline_result.sentinel?.escalate_to_human||false,
+      total_flagged:lastResult.pipeline_result.sentinel?.total_flagged||0,
+      flagged_claims:lastResult.pipeline_result.sentinel?.flagged_claims||[],
+      flawed_summary:lastResult.pipeline_result.flawedSummary||null,
+      corrected_summary:lastResult.pipeline_result.correction||null,
+      revalidation:lastResult.pipeline_result.revalidation||null
+    }
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=lastResult.scenario_id+'-result-'+new Date().toISOString().slice(0,19).replace(/:/g,'-')+'.json';
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 function step(n,state,txt){
@@ -365,6 +402,13 @@ async function run(){
       }
     }
     S.tot++;metrics();
+    lastResult={
+      scenario_id: sel,
+      scenario_name: SCENARIOS.find(s=>s.id===sel)?.name||sel,
+      exported_at: new Date().toISOString(),
+      pipeline_result: data
+    };
+    document.getElementById('exsec').style.display='block';
   }catch(e){
     alert('Error: '+e.message);
   }
