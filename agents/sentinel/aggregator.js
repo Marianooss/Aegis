@@ -260,11 +260,11 @@ const exampleLayer4 = {
   }
 };
 
-// Generate verdict (with Layer 1 for claim_type join)
-const verdict = aggregateSentinelVerdict(exampleLayer2, exampleLayer3, exampleLayer4, exampleLayer1);
-
-// Output for testing
-console.log(JSON.stringify(verdict, null, 2));
+// Demo: run `node agents/sentinel/aggregator.js` to see TC-002 output
+if (require.main === module) {
+  const verdict = aggregateSentinelVerdict(exampleLayer2, exampleLayer3, exampleLayer4, exampleLayer1);
+  console.log(JSON.stringify(verdict, null, 2));
+}
 
 /*
 Expected output for TC-002 (Allergy Hallucination):

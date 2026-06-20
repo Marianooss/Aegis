@@ -384,71 +384,76 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === 'POST' && req.url === '/api/run') {
-    let body = '';
-    req.on('data', chunk => body += chunk);
-    req.on('end', async () => {
-      try {
-        const { scenarioId } = JSON.parse(body);
-        const scenariosDir = path.join(__dirname, '../../test-scenarios');
-        const files = fs.readdirSync(scenariosDir);
-        const file = files.find(f => f.startsWith(scenarioId));
-        if (!file) throw new Error('Scenario not found: ' + scenarioId);
+    try {
+      let body = '';
+      for await (const chunk of req) body += chunk;
 
-        const scenario = JSON.parse(fs.readFileSync(path.join(scenariosDir, file), 'utf8'));
-        const note = scenario.clinical_note?.content || scenario.clinical_note;
-        const expectedVerdict = scenario.expected_verdict;
-        const flawedSummary = getSummaryText(scenario);
-        const threshold = scenario.escalation_threshold || 'MEDIUM';
+      const { scenarioId } = JSON.parse(body);
+      const scenariosDir = path.join(__dirname, '../../test-scenarios');
+      const files = fs.readdirSync(scenariosDir);
+      const file = files.find(f => f.startsWith(scenarioId));
+      if (!file) throw new Error('Scenario not found: ' + scenarioId);
 
-        // Step 1: Summarizer (inline for UI display)
-        const sumRaw = await callClaude(SUMMARIZER_SYSTEM, `Summarize this clinical note:\n\n${note}`);
-        const sumOut = parseJSON(sumRaw);
+      const scenario = JSON.parse(fs.readFileSync(path.join(scenariosDir, file), 'utf8'));
+      const note = scenario.clinical_note?.content || scenario.clinical_note;
+      const expectedVerdict = scenario.expected_verdict;
+      const flawedSummary = getSummaryText(scenario);
+      const threshold = scenario.escalation_threshold || 'MEDIUM';
 
-        // Determine target summary to validate
-        const target = expectedVerdict === 'PASS'
-          ? (sumOut?.summary_text || '')
-          : (flawedSummary || sumOut?.summary_text || '');
+      // Step 1: Summarizer (inline for UI display)
+      const sumRaw = await callClaude(SUMMARIZER_SYSTEM, `Summarize this clinical note:\n\n${note}`);
+      const sumOut = parseJSON(sumRaw);
 
-        // Steps 2-4: SENTINEL validation via 4-layer pipeline + correction + re-validation
-        const pipelineResult = await runPipeline(note, target, threshold);
+      // Determine target summary to validate
+      const target = expectedVerdict === 'PASS'
+        ? (sumOut?.summary_text || '')
+        : (flawedSummary || sumOut?.summary_text || '');
 
-        // Map pipeline output to frontend-compatible format
-        const sentinelOut = {
-          verdict: pipelineResult.verdict,
-          overall_severity: pipelineResult.overall_severity,
-          escalate_to_human: pipelineResult.escalate_to_human,
-          total_flagged: pipelineResult.flagged_claims.length,
-          flagged_claims: pipelineResult.flagged_claims.map(f => ({
-            claim_text: f.claim,
-            failure_type: f.issue_type,
-            severity: f.severity,
-            source_evidence: f.evidence,
-            explanation: f.recommendation
-          }))
-        };
+      // Steps 2-4: SENTINEL validation via 4-layer pipeline + correction + re-validation
+      const pipelineResult = await runPipeline(note, target, threshold);
 
-        const revalOut = pipelineResult.revalidation_verdict
-          ? { verdict: pipelineResult.revalidation_verdict, overall_severity: pipelineResult.overall_severity }
-          : null;
+      // Map pipeline output to frontend-compatible format
+      const sentinelOut = {
+        verdict: pipelineResult.verdict,
+        overall_severity: pipelineResult.overall_severity,
+        escalate_to_human: pipelineResult.escalate_to_human,
+        total_flagged: pipelineResult.flagged_claims.length,
+        flagged_claims: pipelineResult.flagged_claims.map(f => ({
+          claim_text: f.claim,
+          failure_type: f.issue_type,
+          severity: f.severity,
+          source_evidence: f.evidence,
+          explanation: f.recommendation
+        }))
+      };
 
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({
-          sentinel: sentinelOut,
-          correction: pipelineResult.corrected_summary,
-          flawedSummary: target,
-          revalidation: revalOut
-        }));
+      const revalOut = pipelineResult.revalidation_verdict
+        ? { verdict: pipelineResult.revalidation_verdict, overall_severity: pipelineResult.overall_severity }
+        : null;
 
-      } catch (e) {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        sentinel: sentinelOut,
+        correction: pipelineResult.corrected_summary,
+        flawedSummary: target,
+        revalidation: revalOut
+      }));
+
+    } catch (e) {
+      if (!res.headersSent) {
         res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: e.message }));
       }
-    });
+    }
     return;
   }
 
   res.writeHead(404);
   res.end('Not found');
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('[unhandledRejection]', reason);
 });
 
 if (!KEY) { console.error('ANTHROPIC_API_KEY not found in .env'); process.exit(1); }

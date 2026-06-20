@@ -1,6 +1,7 @@
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
+const https = require('https');
 const { aggregateSentinelVerdict } = require('../../agents/sentinel/aggregator.js');
 const { correctionAgent } = require('../agents/correction.js');
 
@@ -21,24 +22,42 @@ SEVERITY: CRITICAL=dangerous fabrication | HIGH=significant error | MEDIUM=minor
 Return ONLY valid JSON:
 {"verdict":"PASS"|"FAIL","overall_severity":"NONE"|"MEDIUM"|"HIGH"|"CRITICAL","escalate_to_human":boolean,"flagged_claims":[{"claim_text":"string","failure_type":"HALLUCINATION"|"CONTRADICTION"|"CRITICAL_OMISSION","severity":"string","source_evidence":"string","explanation":"string"}],"total_flagged":number,"sentinel_summary":"string"}`;
 
-async function callClaude(system, userMsg, maxTokens = 2048) {
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': KEY,
-      'anthropic-version': '2023-06-01'
-    },
-    body: JSON.stringify({
+function callClaude(system, userMsg, maxTokens = 2048) {
+  return new Promise((resolve, reject) => {
+    const body = JSON.stringify({
       model: 'claude-sonnet-4-6',
       max_tokens: maxTokens,
       system,
       messages: [{ role: 'user', content: userMsg }]
-    })
+    });
+    const req = https.request('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': KEY,
+        'anthropic-version': '2023-06-01',
+        'Content-Length': Buffer.byteLength(body)
+      }
+    }, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(data);
+          if (res.statusCode < 200 || res.statusCode >= 300) {
+            reject(new Error(`API error ${res.statusCode}: ${data.substring(0, 200)}`));
+          } else {
+            resolve(parsed.content[0].text);
+          }
+        } catch (e) {
+          reject(new Error(`Parse error: ${data.substring(0, 200)}`));
+        }
+      });
+    });
+    req.on('error', reject);
+    req.write(body);
+    req.end();
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(`API error: ${JSON.stringify(data)}`);
-  return data.content[0].text;
 }
 
 function parseJSON(raw) {

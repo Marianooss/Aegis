@@ -1,4 +1,5 @@
 require('dotenv').config();
+const https = require('https');
 
 const API_URL = 'https://api.anthropic.com/v1/messages';
 const KEY = process.env.ANTHROPIC_API_KEY;
@@ -18,24 +19,42 @@ RULES:
 - For CRITICAL_OMISSION: add the missing critical information
 - Return ONLY valid JSON matching the original summary schema`;
 
-async function callClaude(system, userMsg, maxTokens = 1024) {
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': KEY,
-      'anthropic-version': '2023-06-01'
-    },
-    body: JSON.stringify({
+function callClaude(system, userMsg, maxTokens = 1024) {
+  return new Promise((resolve, reject) => {
+    const body = JSON.stringify({
       model: 'claude-sonnet-4-6',
       max_tokens: maxTokens,
       system,
       messages: [{ role: 'user', content: userMsg }]
-    })
+    });
+    const req = https.request('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': KEY,
+        'anthropic-version': '2023-06-01',
+        'Content-Length': Buffer.byteLength(body)
+      }
+    }, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(data);
+          if (res.statusCode < 200 || res.statusCode >= 300) {
+            reject(new Error(`API error ${res.statusCode}: ${data.substring(0, 200)}`));
+          } else {
+            resolve(parsed.content[0].text);
+          }
+        } catch (e) {
+          reject(new Error(`Parse error: ${data.substring(0, 200)}`));
+        }
+      });
+    });
+    req.on('error', reject);
+    req.write(body);
+    req.end();
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(`API error: ${JSON.stringify(data)}`);
-  return data.content[0].text;
 }
 
 function parseJSON(raw) {
