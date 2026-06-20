@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:uipath="http://uipath.org/schema/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" exporter="UiPath Studio Web (https://uipath.com)" exporterVersion="e9e1aef3">
+  <bpmn:process id="Process_1" name="Process">
+    <bpmn:extensionElements>
+      <uipath:variables version="v1">
+        <uipath:input id="vOBOJOGdv" name="clinical_note" type="string" elementId="Event_start" default="" />
+        <uipath:input id="vOKxFb0GB" name="escalation_threshold" type="string" elementId="Event_start" default="MEDIUM" />
+        <uipath:inputOutput id="clinicalNote" name="clinical_note" type="string" elementId="Event_start" />
+        <uipath:inputOutput id="escalationThreshold" name="escalation_threshold" type="string" elementId="Event_start" />
+        <uipath:inputOutput id="error3" name="Error" type="jsonSchema" elementId="Activity_HdMBSO"><![CDATA[{"type":"object","properties":{"code":{"type":"string"},"message":{"type":"string"},"detail":{"type":"string"},"category":{"type":"string"},"status":{"type":"number"},"element":{"type":"string"}}}]]></uipath:inputOutput>
+        <uipath:inputOutput id="reviewerComments" name="ReviewerComments" type="string" elementId="Activity_HdMBSO" />
+        <uipath:inputOutput id="action" name="Action" type="string" elementId="Activity_HdMBSO" />
+        <uipath:inputOutput id="hitlTask" name="hitlTask" type="jsonSchema" elementId="Activity_HdMBSO"><![CDATA[{"type":"object","displayName":"All Task Properties","properties":{"Id":{"type":"integer"},"Key":{"type":"string"},"Title":{"type":"string"},"Status":{"type":"string"},"Action":{"type":"string"},"ActionLabel":{"type":"string"},"Priority":{"type":"string"},"Type":{"type":"string"},"Data":{"type":"object"},"CompletedByUser":{"type":"object"},"AssignedToUser":{"type":"object"},"AssignedToUserId":{"type":"integer"},"TaskAssignmentCriteria":{"type":"string"},"TaskAssignees":{"type":"array"},"CompletionTime":{"type":"string"},"CreationTime":{"type":"string"},"LastModificationTime":{"type":"string"},"LastAssignedTime":{"type":"string"},"OrganizationUnitId":{"type":"integer"},"OrganizationUnitFullyQualifiedName":{"type":"string"},"ParentOperationId":{"type":"string"},"CreatorJobKey":{"type":"string"},"ExternalTag":{"type":"string"},"ProcessingTime":{"type":"integer"},"WaitJobState":{"type":"string"},"WaitJobKey":{"type":"string"},"TaskSchemaKey":{"type":"string"},"IsDeleted":{"type":"boolean"},"IsCurrentUserInAllUserAssignedGroup":{"type":"boolean"},"CreatorUserId":{"type":"integer"},"LastModifierUserId":{"type":"integer"},"DeleterUserId":{"type":"integer"},"DeletionTime":{"type":"string"},"Tags":{"type":"array"},"TaskDefinitionPropertiesId":{"type":"integer"},"AppTasksMetadata":{"type":"object"},"TaskSlaDetails":{"type":"array"},"TaskSource":{"type":"object"}},"$schema":"http://json-schema.org/draft-07/schema#"}]]></uipath:inputOutput>
+        <uipath:inputOutput id="error" name="Error" type="jsonSchema" elementId="Activity_l33rMG"><![CDATA[{"type":"object","properties":{"code":{"type":"string"},"message":{"type":"string"},"detail":{"type":"string"},"category":{"type":"string"},"status":{"type":"number"},"element":{"type":"string"}}}]]></uipath:inputOutput>
+        <uipath:inputOutput id="aiSummary" name="ai_summary" type="string" elementId="Activity_l33rMG" />
+        <uipath:inputOutput id="error2" name="Error" type="jsonSchema" elementId="Activity_MJzv4S"><![CDATA[{"type":"object","properties":{"code":{"type":"string"},"message":{"type":"string"},"detail":{"type":"string"},"category":{"type":"string"},"status":{"type":"number"},"element":{"type":"string"}}}]]></uipath:inputOutput>
+        <uipath:inputOutput id="verdict" name="verdict" type="string" elementId="Activity_MJzv4S" />
+        <uipath:inputOutput id="overallSeverity" name="overall_severity" type="string" elementId="Activity_MJzv4S" />
+        <uipath:inputOutput id="escalateToHuman" name="escalate_to_human" type="boolean" elementId="Activity_MJzv4S" />
+        <uipath:inputOutput id="breakdown" name="breakdown" type="jsonSchema" elementId="Activity_MJzv4S"><![CDATA[{"type":"object","properties":{"hallucinations":{"type":"integer"},"contradictions":{"type":"integer"},"critical_omissions":{"type":"integer"}},"$schema":"http://json-schema.org/draft-07/schema#"}]]></uipath:inputOutput>
+        <uipath:inputOutput id="validationLayers" name="validation_layers" type="jsonSchema" elementId="Activity_MJzv4S"><![CDATA[{"type":"array","$schema":"http://json-schema.org/draft-07/schema#"}]]></uipath:inputOutput>
+        <uipath:inputOutput id="flaggedClaims" name="flagged_claims" type="jsonSchema" elementId="Activity_MJzv4S"><![CDATA[{"type":"array","$schema":"http://json-schema.org/draft-07/schema#"}]]></uipath:inputOutput>
+        <uipath:inputOutput id="patientId" name="patient_id" type="string" elementId="Activity_MJzv4S" />
+        <uipath:inputOutput id="timestamp" name="timestamp" type="string" elementId="Activity_MJzv4S" />
+      </uipath:variables>
+      <uipath:bindings version="v1">
+        <uipath:binding id="bLle1elR3" name="folderPath" type="string" resource="process" resourceSubType="Agent" resourceKey="Agent" propertyAttribute="folderPath" />
+        <uipath:binding id="bJPf6WVfi" name="name" type="string" default="Agent" resource="process" resourceSubType="Agent" resourceKey="Agent" propertyAttribute="name" />
+        <uipath:binding id="bp5AZUBB3" name="folderPath" type="string" resource="process" resourceSubType="Agent" resourceKey="Agent_1" propertyAttribute="folderPath" />
+        <uipath:binding id="baic0cuTY" name="name" type="string" default="Agent_1" resource="process" resourceSubType="Agent" resourceKey="Agent_1" propertyAttribute="name" />
+        <uipath:binding id="bjYv4GrVo" name="folderPath" type="string" resource="app" resourceKey="EscalationApp" propertyAttribute="folderPath" />
+        <uipath:binding id="bFjmooXjn" name="name" type="string" default="EscalationApp" resource="app" resourceKey="EscalationApp" propertyAttribute="name" />
+        <uipath:binding id="bNxIvIvA4" name="folderPath" type="string" resource="process" resourceSubType="Agent" resourceKey="Agent" propertyAttribute="folderPath" />
+        <uipath:binding id="bldpPRT7r" name="folderPath" type="string" resource="process" resourceSubType="Agent" resourceKey="Agent_1" propertyAttribute="folderPath" />
+      </uipath:bindings>
+      <uipath:migrationVersion version="15" />
+      <uipath:intsvcActivityConfig version="v2" />
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="Event_start" name="SENTINEL Pipeline Start">
+      <bpmn:extensionElements>
+        <uipath:entryPointId value="f9f0fa95-7067-487b-a5c8-539fb633a69b" />
+        <uipath:mapping version="v1">
+          <uipath:type value="BPMN.Variables" version="v1" />
+          <uipath:output name="clinical_note" type="string" source="=vars.vOBOJOGdv" var="clinicalNote" />
+          <uipath:output name="escalation_threshold" type="string" source="=vars.vOKxFb0GB" var="escalationThreshold" />
+        </uipath:mapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>edge_2KWoSr</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Activity_l33rMG" name="MedicalRecordsSummarizer">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Orchestrator.StartAgentJob" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bJPf6WVfi" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bNxIvIvA4" />
+            <uipath:input name="_label" type="string" value="Agent" />
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"clinical_note":{"type":"string"}},"required":["clinical_note"]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="JobArguments" type="json" target="bodyField"><![CDATA[{"clinical_note":"=vars.clinicalNote"}]]></uipath:input>
+          <uipath:output name="Error" type="jsonSchema" source="=Error" var="error" />
+          <uipath:output name="ai_summary" type="string" source="=ai_summary" var="aiSummary" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>edge_2KWoSr</bpmn:incoming>
+      <bpmn:outgoing>edge_nklqIJ</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_MJzv4S" name="SENTINEL Validator">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Orchestrator.StartAgentJob" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.baic0cuTY" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bldpPRT7r" />
+            <uipath:input name="_label" type="string" value="Agent_1" />
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"clinical_note":{"type":"string"},"ai_summary":{"type":"string"},"patient_id":{"type":"string"},"summary_model":{"type":"string"},"escalation_threshold":{"type":"string"}},"required":["clinical_note","ai_summary"]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="JobArguments" type="json" target="bodyField"><![CDATA[{"clinical_note":"=vars.clinicalNote","ai_summary":"=vars.aiSummary","patient_id":null,"summary_model":null,"escalation_threshold":"=vars.escalationThreshold"}]]></uipath:input>
+          <uipath:output name="Error" type="jsonSchema" source="=Error" var="error2" />
+          <uipath:output name="verdict" type="string" source="=verdict" var="verdict" />
+          <uipath:output name="overall_severity" type="string" source="=overall_severity" var="overallSeverity" />
+          <uipath:output name="escalate_to_human" type="boolean" source="=escalate_to_human" var="escalateToHuman" />
+          <uipath:output name="breakdown" type="jsonSchema" source="=breakdown" var="breakdown" />
+          <uipath:output name="validation_layers" type="jsonSchema" source="=validation_layers" var="validationLayers" />
+          <uipath:output name="flagged_claims" type="jsonSchema" source="=flagged_claims" var="flaggedClaims" />
+          <uipath:output name="patient_id" type="string" source="=patient_id" var="patientId" />
+          <uipath:output name="timestamp" type="string" source="=timestamp" var="timestamp" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>edge_nklqIJ</bpmn:incoming>
+      <bpmn:outgoing>edge_Vxrn2g</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_jaMQYQ" name="Escalate?">
+      <bpmn:incoming>edge_Vxrn2g</bpmn:incoming>
+      <bpmn:outgoing>edge_Gateway_jaMQYQ-Event_VJ2OIj</bpmn:outgoing>
+      <bpmn:outgoing>edge_Gateway_jaMQYQ-Activity_HdMBSO</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="Event_VJ2OIj" name="PASS - No escalation required">
+      <bpmn:incoming>edge_Gateway_jaMQYQ-Event_VJ2OIj</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="Activity_HdMBSO" name="Clinical Review - Action Center">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Actions.HITL" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bFjmooXjn" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bjYv4GrVo" />
+            <uipath:input name="_label" type="string" value="EscalationApp" />
+            <uipath:input name="taskTitle" type="string" value="SENTINEL Clinical Review - Validation Required" required="true" />
+            <uipath:input name="assignmentCriteria" type="string" value="SingleUser" />
+            <uipath:input name="recipient" type="json" />
+            <uipath:input name="customAssignees" type="string" />
+            <uipath:input name="priority" type="string" value="Medium" />
+            <uipath:input name="labels" type="string" />
+            <uipath:input name="actionCatalogName" type="string" />
+            <uipath:input name="enableActionableNotifications" type="boolean" value="false" />
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"Verdict":{"type":"string"},"OverallSeverity":{"type":"string"},"FlaggedClaims":{"type":"array"},"AiSummary":{"type":"string"},"ClinicalNote":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="HitlTaskArguments" type="json" target="bodyField"><![CDATA[{"Verdict":"=vars.verdict","OverallSeverity":"=vars.overallSeverity","FlaggedClaims":"=vars.flaggedClaims","AiSummary":"=vars.aiSummary","ClinicalNote":"=vars.clinicalNote"}]]></uipath:input>
+          <uipath:output name="Error" type="jsonSchema" source="=Error" var="error3" />
+          <uipath:output name="ReviewerComments" type="string" source="=ReviewerComments" var="reviewerComments" />
+          <uipath:output name="Action" type="string" source="=Action" var="action" options="[{&#34;value&#34;:&#34;Confirmed&#34;,&#34;label&#34;:&#34;Confirmed&#34;},{&#34;value&#34;:&#34;Acceptable&#34;,&#34;label&#34;:&#34;Acceptable&#34;},{&#34;value&#34;:&#34;FalsePositive&#34;,&#34;label&#34;:&#34;FalsePositive&#34;}]" />
+          <uipath:output name="hitlTask" type="jsonSchema" source="=hitlTask" var="hitlTask" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>edge_Gateway_jaMQYQ-Activity_HdMBSO</bpmn:incoming>
+      <bpmn:outgoing>edge_Activity_HdMBSO-Event_kR1kjB</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_kR1kjB" name="FAIL - Human review required">
+      <bpmn:incoming>edge_Activity_HdMBSO-Event_kR1kjB</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="edge_2KWoSr" sourceRef="Event_start" targetRef="Activity_l33rMG" />
+    <bpmn:sequenceFlow id="edge_nklqIJ" sourceRef="Activity_l33rMG" targetRef="Activity_MJzv4S" />
+    <bpmn:sequenceFlow id="edge_Vxrn2g" sourceRef="Activity_MJzv4S" targetRef="Gateway_jaMQYQ" />
+    <bpmn:sequenceFlow id="edge_Gateway_jaMQYQ-Event_VJ2OIj" name="NO" sourceRef="Gateway_jaMQYQ" targetRef="Event_VJ2OIj">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=escalate_to_human == false</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="edge_Gateway_jaMQYQ-Activity_HdMBSO" name="YES" sourceRef="Gateway_jaMQYQ" targetRef="Activity_HdMBSO">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=escalate_to_human == true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="edge_Activity_HdMBSO-Event_kR1kjB" sourceRef="Activity_HdMBSO" targetRef="Event_kR1kjB" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1">
+      <bpmndi:BPMNShape id="S_Event_start" bpmnElement="Event_start">
+        <dc:Bounds x="320" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="320" y="143" width="36" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Activity_l33rMG" bpmnElement="Activity_l33rMG">
+        <dc:Bounds x="432" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="432" y="165" width="100" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Activity_MJzv4S" bpmnElement="Activity_MJzv4S">
+        <dc:Bounds x="592" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="592" y="165" width="100" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Gateway_jaMQYQ" bpmnElement="Gateway_jaMQYQ">
+        <dc:Bounds x="784" y="95" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="784" y="150" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Event_VJ2OIj" bpmnElement="Event_VJ2OIj">
+        <dc:Bounds x="882" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="882" y="143" width="36" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Activity_HdMBSO" bpmnElement="Activity_HdMBSO">
+        <dc:Bounds x="759" y="193" width="100" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="759" y="278" width="100" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Event_kR1kjB" bpmnElement="Event_kR1kjB">
+        <dc:Bounds x="791" y="321" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="791" y="362" width="36" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_edge_2KWoSr" bpmnElement="edge_2KWoSr">
+        <di:waypoint x="356" y="120" />
+        <di:waypoint x="432" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_edge_nklqIJ" bpmnElement="edge_nklqIJ">
+        <di:waypoint x="532" y="120" />
+        <di:waypoint x="592" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_edge_Vxrn2g" bpmnElement="edge_Vxrn2g">
+        <di:waypoint x="692" y="120" />
+        <di:waypoint x="784" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_edge_Gateway_jaMQYQ-Event_VJ2OIj" bpmnElement="edge_Gateway_jaMQYQ-Event_VJ2OIj">
+        <di:waypoint x="834" y="120" />
+        <di:waypoint x="882" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_edge_Gateway_jaMQYQ-Activity_HdMBSO" bpmnElement="edge_Gateway_jaMQYQ-Activity_HdMBSO">
+        <di:waypoint x="809" y="145" />
+        <di:waypoint x="809" y="193" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_edge_Activity_HdMBSO-Event_kR1kjB" bpmnElement="edge_Activity_HdMBSO-Event_kR1kjB">
+        <di:waypoint x="809" y="273" />
+        <di:waypoint x="809" y="321" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

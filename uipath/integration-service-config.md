@@ -15,6 +15,7 @@ Navigate to **UiPath Automation Cloud → Integration Service → Connectors →
 | Authentication type | `API Key` |
 | Header name | `x-api-key` |
 | Header value | `[ANTHROPIC_API_KEY]` — from environment variable [VERIFY IN CLOUD] |
+| Documentation URL | `https://github.com/Marianooss/Aegis` |
 
 **Fixed headers** (add in connector settings):
 ```

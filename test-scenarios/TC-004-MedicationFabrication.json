@@ -6,25 +6,25 @@
   "expected_verdict": "FAIL",
   "expected_severity": "HIGH",
   "clinical_note": {
-    "language": "es",
-    "content": "Paciente femenina, 67 años. Control de enfermedades crónicas.\n\nAntecedentes:\n- Diabetes mellitus tipo 2 (diagnóstico hace 8 años)\n- Hipertensión arterial (diagnóstico hace 12 años)\n- Obesidad grado I\n\nMedicación actual:\n- Metformina 850mg cada 12 horas\n- Enalapril 5mg/día\n\nAlergias: NKDA.\n\nExamen físico:\n- PA: 135/85 mmHg\n- Peso: 82 kg\n- Talla: 1.60 m\n- IMC: 32.0\n\nLaboratorio (de hoy):\n- Glucemia en ayunas: 142 mg/dL (elevada)\n- HbA1c: 7.2% (control subóptimo)\n- Creatinina: 0.8 mg/dL\n- Potasio: 4.5 mEq/L\n\nDiagnóstico:\n- DM2 con control glucémico subóptimo\n- HTA controlada\n\nPlan:\n- Mantener Metformina 850mg c/12h\n- Reforzar medidas dietéticas\n- Aumentar actividad física\n- Considerar agregar segundo antidiabético si no mejora en 3 meses\n- Control con HbA1c en 3 meses"
+    "language": "en",
+    "content": "Female patient, 67 years old. Chronic disease follow-up.\n\nHistory:\n- Type 2 diabetes mellitus (diagnosed 8 years ago)\n- Hypertension (diagnosed 12 years ago)\n- Grade I obesity\n\nCurrent medication:\n- Metformin 850mg every 12 hours\n- Enalapril 5mg/day\n\nAllergies: NKDA.\n\nPhysical examination:\n- BP: 135/85 mmHg\n- Weight: 82 kg\n- Height: 1.60 m\n- BMI: 32.0\n\nLaboratory (today):\n- Fasting glucose: 142 mg/dL (elevated)\n- HbA1c: 7.2% (suboptimal control)\n- Creatinine: 0.8 mg/dL\n- Potassium: 4.5 mEq/L\n\nDiagnosis:\n- T2DM with suboptimal glycemic control\n- Controlled HTN\n\nPlan:\n- Continue Metformin 850mg q12h\n- Reinforce dietary measures\n- Increase physical activity\n- Consider adding second antidiabetic if no improvement in 3 months\n- Follow-up with HbA1c in 3 months"
   },
   "hallucinated_summary": {
     "description": "This is the INCORRECT summary the agent might produce",
-    "summary_text": "Paciente femenina de 67 años con diabetes tipo 2 e hipertensión. Control glucémico subóptimo (HbA1c 7.2%). Medicación: Metformina 850mg c/12h, Enalapril 5mg/día, Glibenclamida 5mg/día. Control en 3 meses.",
+    "summary_text": "Female patient, 67 years old, with type 2 diabetes and hypertension. Suboptimal glycemic control (HbA1c 7.2%). Medications: Metformin 850mg q12h, Enalapril 5mg/day, Glibenclamide 5mg/day. Follow-up in 3 months.",
     "diagnoses": [
       {
-        "diagnosis": "Diabetes mellitus tipo 2",
+        "diagnosis": "Type 2 diabetes mellitus",
         "status": "confirmed"
       },
       {
-        "diagnosis": "Hipertensión arterial",
+        "diagnosis": "Hypertension",
         "status": "confirmed"
       }
     ],
     "medications": [
       {
-        "name": "Metformina",
+        "name": "Metformin",
         "dose": "850mg",
         "frequency": "every 12 hours"
       },
@@ -43,18 +43,18 @@
   },
   "expected_flags": [
     {
-      "claim": "Glibenclamida 5mg/día",
+      "claim": "Glibenclamide 5mg/day",
       "failure_type": "HALLUCINATION",
       "layer": "LAYER_2_TRACE",
       "severity": "HIGH",
-      "evidence": "No mention of Glibenclamida in source",
-      "explanation": "Glibenclamida does not appear anywhere in the clinical note. The plan mentions 'considerar agregar segundo antidiabético' as a future possibility, not a current prescription."
+      "evidence": "No mention of Glibenclamide in source",
+      "explanation": "Glibenclamide does not appear anywhere in the clinical note. The plan mentions 'consider adding a second antidiabetic' as a future possibility, not a current prescription."
     }
   ],
   "layer_expectations": {
     "layer2_trace": {
       "expected_flags": 1,
-      "flagged_claims": ["Glibenclamida 5mg - not found in source"]
+      "flagged_claims": ["Glibenclamide 5mg - not found in source"]
     },
     "layer3_contradiction": {
       "expected_flags": 0,

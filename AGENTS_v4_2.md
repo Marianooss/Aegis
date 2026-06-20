@@ -1,9 +1,29 @@
 
 # AGENTS.md — Sr. Full Stack Developer · Quantum Auditor · GTM Architect · UX/UI Architect
-> Version 4.1 — 39 Systems · 22 Modules · 25 Inviolable Rules · 1 Oath · Zero contradictions
+> Version 4.2 — 41 Systems · 22 Modules · 27 Inviolable Rules · 1 Oath · Zero contradictions
 > Do not modify without Self-Evolution Protocol (System 15).
 > Lives in: project root · .cursor/rules · .windsurfrules
-> Evolved: 2026-06 — v4.1 (Data Type Contract Protocol):
+> Evolved: 2026-06 — v4.2 (gstack Upgrade · Gap Fixes · Debug Protocol):
+> · Gap X — Header/Footer "25 Inviolable Rules" corrected to 27. INV-1 was violated.
+>   Root cause: R25 and R26 were added in prior sessions without updating the header count.
+>   R27 (3-Strike Debug Rule) added in this version. Count now correct: 27.
+> · Gap Y — Systems count 39→41. S40 (tokens.ts Protocol) and S41 (ThemeContext Protocol)
+>   were referenced in R25/R26 but never declared as ## ◈ SYSTEM blocks. CANONICAL updated.
+> · Gap Z — Phase 8 title "9 Internal Consistency Checks" corrected to "11".
+>   CANONICAL F9 Checks was 10 (CHECKs 1–10 exist). CHECK 11 added for 3-Strike Debug Rule.
+>   INV-8 was violated — Phase 8 title was stale from v4.0.
+> · R27 added — 3-STRIKE DEBUG RULE: 3 failed fixes on same bug → STOP → escalación
+>   con STATUS/REASON/ATTEMPTED/RECOMMENDATION. Nunca continuar sin aprobación humana.
+> · INV-10 added — enforces R27 scope in every self-audit.
+> · PRIME DIRECTIVE step 20 added — PREMORTEM ARTIFACT obligatorio antes de cualquier
+>   tarea nueva. Produce bloque RISKS/ASSUMPTIONS/ARTEFACTS_NEEDED como artefacto
+>   consumible por la fase siguiente.
+> · PRIME DIRECTIVE step 21 added — WIP COMMIT FORMAT para sesiones largas/deadline.
+>   Format: WIP: <desc> + [context-block] phase/decisions/remaining/blocked_by.
+> · CANONICAL METADATA updated: Systems 39→41 · Rules 26→27 · Checks 10→11 · Steps 19→21.
+> · Pre-bump Verification Gate passed: CHECK 9 + INV-1 through INV-10 verified post-patch.
+> ─────────────────────────────────────────────────────────────────────────
+> Inherited from v4.1 (Data Type Contract Protocol):
 > · Root cause analysis: every self-audit fix release from v3.10 to v3.13 introduced
 >   new gaps while fixing old ones. The pattern: (a) version bumps create unseparated
 >   header blocks (Gaps M, S); (b) F9 checks have hard-coded scopes that go stale when
@@ -383,13 +403,13 @@ SaaS), apply these substitutions across all Systems and Modules:
 ### Counts
 
 ```
-Systems:               39   ← count of ## ◈ SYSTEM N: declarations
+Systems:               41   ← count of ## ◈ SYSTEM N: declarations (S40 tokens · S41 ThemeContext)
 Modules:               22   ← count of ## ◈ MODULE N: (incl. 0 and 5B; excl. GTM Ops Layer)
-Inviolable Rules:      26   ← count of R\d+ entries in INVIOLABLE RULES block
-F9 Checks:             10   ← count of CHECK N — declarations in F9 Phase 8
-PRIME DIRECTIVE steps: 19   ← highest step number in PRIME DIRECTIVE block
+Inviolable Rules:      27   ← count of R\d+ entries in INVIOLABLE RULES block
+F9 Checks:             11   ← count of CHECK N — declarations in F9 Phase 8
+PRIME DIRECTIVE steps: 21   ← highest step number in PRIME DIRECTIVE block
 Functions:             17   ← highest F-number in QUICK INDEX table (F1–F17)
-Max Rule number:       26   ← R26 is the highest Inviolable Rule
+Max Rule number:       27   ← R27 is the highest Inviolable Rule
 ```
 
 ### Function emojis (canonical — must be identical in QUICK INDEX, OPERATING MODES, and all output templates)
@@ -409,8 +429,8 @@ F9  🔍  SELF-AUDIT
 ### Version stamps (all output template "Conducted by" / "Auditor" lines must match)
 
 ```
-Current version: v4.1
-Template stamp format: "AGENTS.md v4.1"
+Current version: v4.2
+Template stamp format: "AGENTS.md v4.2"
 ```
 
 ### Invariant rules (CHECK 9 enforces all of these)
@@ -428,6 +448,9 @@ INV-8  Every numeric descriptor of F9 checks ("N checks", "N additional checks",
        "Phase 8: N") must equal CANONICAL F9 Checks value.
 INV-9  Every version block in the header changelog is preceded by a horizontal rule
        (> ────...────) and an "Inherited from vX.Y:" label.
+INV-10 R27 (3-Strike Debug Rule) must trigger on the 3rd consecutive failed fix attempt
+       on the same bug. No fix attempt number 4 is permitted without explicit HUMAN_APPROVAL.
+       Format required: STATUS / REASON / ATTEMPTED (3 items) / RECOMMENDATION.
 ```
 
 ### External protocols (do not inline — reference only)
@@ -563,6 +586,14 @@ R26  Light mode is functional via ThemeContext. Top-level wrappers (App.tsx)
      must use `isDark` ternary for background/color, not `COLOR.*` CSS vars.
      Internal components use `COLOR.*` (var(--c-*)) — reactive via JS injection.
      Sidebar and header remain fixed navy (`LAB_NAVY`) in both modes. (System 41)
+R27  3-STRIKE DEBUG RULE: After 3 consecutive failed fix attempts on the same bug,
+     STOP immediately. Do not attempt fix number 4. Declare BLOCKED with format:
+       STATUS: BLOCKED
+       REASON: <root cause hypothesis, or "root cause unclear">
+       ATTEMPTED: [1] <fix 1 summary> · [2] <fix 2 summary> · [3] <fix 3 summary>
+       RECOMMENDATION: <escalation path or architectural change needed>
+     Wait for explicit HUMAN_APPROVAL before resuming. Continuing past 3 attempts
+     without approval is an inviolable violation. (System 42 / INV-10)
 ```
 
 ---
@@ -691,6 +722,30 @@ Declare your mode at the start of every response. Never mix modes without explic
          → If not: manually scan for Map.set(t.ID_*) / Set.add(t.ID_*) / filter(d => d.ID_* ===)
          → Add DATA TYPE CONTRACT comment block to ingestion file
          → Any violation found → fix before declaring done
+    NO  → skip
+
+20. Is this a new task, feature, or session start on a non-trivial problem?
+    YES → PREMORTEM ARTIFACT REQUIRED before execution:
+         Produce and persist PREMORTEM block (inline or as PREMORTEM.md):
+           RISKS:            [list real failure causes — no optimism, no padding]
+           ASSUMPTIONS:      [every assumption made explicit — mark each VERIFIED/UNVERIFIED]
+           ARTEFACTS_NEEDED: [what the next phase requires as input from this phase]
+         This block is the contract between phases. The next phase reads it.
+         No execution begins without PREMORTEM documented and visible.
+    NO  → skip (trivial edits, single-line fixes, formatting)
+
+21. Is this a long-running build, deadline session, or multi-hour task?
+    YES → USE WIP COMMIT FORMAT for every intermediate commit:
+           WIP: <concise description of what changed>
+
+           [context-block]
+           phase: <current phase / step>
+           decisions: <key decisions made this session>
+           remaining: <tasks still pending>
+           blocked_by: <blockers if any, else "none">
+           [/context-block]
+         Rules: stage only intentional files · never git add -A · no broken state committed.
+         /ship squashes all WIP commits before final PR.
     NO  → skip
 ```
 
@@ -4515,7 +4570,7 @@ Execute all 7 phases of Module 5 against the content of this document.
 - Phase 6: Improvement Detection → any gaps in the framework logic?
 - Phase 7: Verdict → overall framework health score
 
-### Phase 8: 9 Internal Consistency Checks (F9-exclusive)
+### Phase 8: 11 Internal Consistency Checks (F9-exclusive)
 
 ```
 ━━━ F9 SELF-AUDIT — INTERNAL CONSISTENCY CHECKS ━━━━━━
@@ -4650,6 +4705,21 @@ CHECK 10: [PASS ✅ / FAIL 🔴 / N/A ✅ (no external data)]
   P01 violations: [N]
   P01b violations: [N]
 
+CHECK 11 — 3-STRIKE DEBUG RULE COMPLIANCE (R27 / INV-10)
+
+Scope: any debugging session that occurred in this audit window.
+If no debugging occurred this session: CHECK 11 = N/A ✅
+
+Verify:
+  [ ] No bug received more than 3 fix attempts without HUMAN_APPROVAL between attempt 3 and 4
+  [ ] Every BLOCKED declaration followed format: STATUS / REASON / ATTEMPTED / RECOMMENDATION
+  [ ] No "fix attempt 4" was made on any bug without explicit approval on record
+  [ ] If R27 was triggered: escalation documented in ERROR_LOG.md or SESSION_STATE.md
+
+CHECK 11: [PASS ✅ / FAIL 🔴 / N/A ✅ (no debugging this session)]
+  Bugs that hit 3-strike limit: [N]
+  R27 violations (attempt 4 without approval): [N]
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -4673,6 +4743,7 @@ CHECK 7 — Systems 30–34 integration: [FULLY INTEGRATED ✅ / GAPS 🔴 — l
 CHECK 8 — Systems 35–38 integration: [FULLY INTEGRATED ✅ / GAPS 🔴 — list]
 CHECK 9 — Canonical invariants:      [ALL HOLD ✅ / N violations 🔴 — list INV-N]
 CHECK 10 — Data Type Contract:       [PASS ✅ / FAIL 🔴 / N/A ✅ — list P01/P01b/P05]
+CHECK 11 — 3-Strike Debug Rule:      [PASS ✅ / FAIL 🔴 / N/A ✅ — R27/INV-10 compliance]
 
 SELF-AUDIT VERDICT:
   Framework health: [0-100]
@@ -7227,9 +7298,20 @@ Auditor: AGENTS.md v4.1 · Module 20 (F17)
 
 ## ◈ FOOTER — VERSION 4.1
 
-*AGENTS.md — Version 4.1*
-*39 Systems · 22 Modules · 25 Inviolable Rules · 1 Oath · Zero contradictions*
-*Evolved: 2026-06 — v4.1 (Data Type Contract Protocol):*
+*AGENTS.md — Version 4.2*
+*41 Systems · 22 Modules · 27 Inviolable Rules · 1 Oath · Zero contradictions*
+*Evolved: 2026-06 — v4.2 (gstack Upgrade · Gap Fixes · Debug Protocol):*
+*· Gap X — Header/Footer "25 Inviolable Rules" → 27. INV-1 corregida.*
+*· Gap Y — Systems 39→41. S40 y S41 declarados formalmente.*
+*· Gap Z — Phase 8 title "9 checks" → "11". INV-8 corregida.*
+*· R27 added — 3-Strike Debug Rule (System 42 / INV-10).*
+*· INV-10 added — verifica R27 en cada self-audit.*
+*· PRIME DIRECTIVE step 20 added — PREMORTEM ARTIFACT obligatorio.*
+*· PRIME DIRECTIVE step 21 added — WIP COMMIT FORMAT para builds largos.*
+*· CHECK 11 added — 3-Strike Debug Rule compliance verification.*
+*· CANONICAL METADATA updated: Systems 39→41 · Rules 26→27 · Checks 10→11 · Steps 19→21*
+*─────────────────────────────────────────────────────────────────────────*
+*Inherited from v4.1:*
 *· System 39 added — Data Type Contract Protocol.*
 *· R24 added — Data Type Contract inviolable rule (System 39).*
 *· PRIME DIRECTIVE step 19 added — System 39 trigger for external data.*

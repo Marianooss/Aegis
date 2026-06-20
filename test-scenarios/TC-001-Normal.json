@@ -6,13 +6,13 @@
   "expected_verdict": "PASS",
   "expected_severity": "NONE",
   "clinical_note": {
-    "language": "es",
-    "content": "Paciente masculino, 45 años. Consulta de control.\n\nMotivo de consulta: Control de hipertensión arterial.\n\nAntecedentes: Hipertensión arterial diagnosticada hace 3 años, en tratamiento.\n\nMedicación actual:\n- Enalapril 10mg/día (mañana)\n- Aspirina 100mg/día (con el almuerzo)\n\nAlergias: Sin alergias conocidas (NKDA).\n\nExamen físico:\n- PA: 128/82 mmHg\n- FC: 72 lpm\n- Peso: 78 kg\n\nLaboratorio (hace 1 mes):\n- Glucemia: 95 mg/dL\n- Creatinina: 0.9 mg/dL\n- Potasio: 4.2 mEq/L\n\nDiagnóstico: Hipertensión arterial controlada.\n\nPlan:\n- Continuar tratamiento actual\n- Control en 3 meses\n- Dieta hiposódica"
+    "language": "en",
+    "content": "Male patient, 45 years old. Follow-up visit.\n\nReason for visit: Hypertension follow-up.\n\nHistory: Hypertension diagnosed 3 years ago, on treatment.\n\nCurrent medication:\n- Enalapril 10mg/day (morning)\n- Aspirin 100mg/day (with lunch)\n\nAllergies: No known allergies (NKDA).\n\nPhysical examination:\n- BP: 128/82 mmHg\n- HR: 72 bpm\n- Weight: 78 kg\n\nLaboratory (1 month ago):\n- Glucose: 95 mg/dL\n- Creatinine: 0.9 mg/dL\n- Potassium: 4.2 mEq/L\n\nDiagnosis: Controlled hypertension.\n\nPlan:\n- Continue current treatment\n- Follow-up in 3 months\n- Low-sodium diet"
   },
   "expected_summary": {
     "diagnoses": [
       {
-        "diagnosis": "Hipertensión arterial",
+        "diagnosis": "Hypertension",
         "status": "confirmed"
       }
     ],
@@ -23,7 +23,7 @@
         "frequency": "daily"
       },
       {
-        "name": "Aspirina",
+        "name": "Aspirin",
         "dose": "100mg",
         "frequency": "daily"
       }

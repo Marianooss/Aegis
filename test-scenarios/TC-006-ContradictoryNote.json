@@ -1,4 +1,4 @@
-{
+﻿{
   "test_case_id": "TC-006",
    "name": "Contradictory Source - Internal Inconsistency in Clinical Note",
    "description": "The source note contains an internal contradiction: one section states NKDA, another documents an ibuprofen allergy. The summarizer picks only one version without flagging the inconsistency. SENTINEL must detect the unresolved contradiction.",
@@ -7,23 +7,23 @@
    "expected_severity": "HIGH",
    "demo_scenario": false,
   "clinical_note": {
-    "language": "es",
-    "content": "Paciente femenina, 54 años. Consulta por cefalea tensional recurrente.\n\nAntecedentes: Migraña diagnosticada hace 10 años.\n\nAlergias (registro histórico): Sin alergias conocidas (NKDA).\n\nMedicación actual: Amitriptilina 25mg noche (profilaxis migraña).\n\nNOTA DE ENFERMERÍA (mismo día): Paciente refiere alergia a ibuprofeno con reacción cutánea documentada en guardia hace 6 meses. No figura en registro histórico. Pendiente actualización.\n\nExamen físico:\n- TA: 128/82 mmHg\n- FC: 76 lpm\n- Sin signos meníngeos\n- Fondo de ojo normal\n\nDiagnóstico: Cefalea tensional. Descartar migraña sin aura.\n\nPlan:\n- Paracetamol 1g c/8h en crisis\n- Continuar amitriptilina\n- EVITAR AINEs hasta aclarar estado alérgico\n- Derivar a neurología para evaluación\n- Actualizar registro de alergias con farmacia clínica"
+    "language": "en",
+    "content": "Female patient, 54 years old. Consultation for recurrent tension headache.\n\nHistory: Migraine diagnosed 10 years ago.\n\nAllergies (historical record): No known allergies (NKDA).\n\nCurrent medication: Amitriptyline 25mg at night (migraine prophylaxis).\n\nNURSING NOTE (same day): Patient reports ibuprofen allergy with documented skin rash in emergency department 6 months ago. Not in historical record. Pending update.\n\nPhysical examination:\n- BP: 128/82 mmHg\n- HR: 76 bpm\n- No meningeal signs\n- Normal funduscopy\n\nDiagnosis: Tension headache. Rule out migraine without aura.\n\nPlan:\n- Paracetamol 1g q8h during crisis\n- Continue amitriptyline\n- AVOID NSAIDs until allergy status clarified\n- Refer to neurology for evaluation\n- Update allergy record with clinical pharmacy"
   },
    "hallucinated_summary": {
      "description": "Summary that picks NKDA without flagging the contradiction documented by nursing",
-     "summary_text": "Paciente femenina de 54 años con cefalea tensional recurrente y antecedente de migraña. Sin alergias conocidas (NKDA). Medicación: amitriptilina 25mg. Plan: paracetamol en crisis, continuar amitriptilina, derivación a neurología.",
+     "summary_text": "Female patient, 54 years old, with recurrent tension headache and migraine history. No known allergies (NKDA). Medication: amitriptyline 25mg. Plan: paracetamol during crisis, continue amitriptyline, neurology referral.",
      "diagnoses": [
-       { "diagnosis": "Cefalea tensional", "status": "confirmed" }
+       { "diagnosis": "Tension headache", "status": "confirmed" }
      ],
      "medications": [
-       { "name": "Amitriptilina", "dose": "25mg", "frequency": "noche" },
-       { "name": "Paracetamol", "dose": "1g", "frequency": "cada 8 horas en crisis" }
+       { "name": "Amitriptilina", "dose": "25mg", "frequency": "night" },
+       { "name": "Paracetamol", "dose": "1g", "frequency": "every 8 hours during crisis" }
      ],
     "allergies": [
       {
-        "allergen": "Ibuprofeno",
-        "reaction": "urticaria localizada",
+        "allergen": "Ibuprofen",
+        "reaction": "localized urticaria",
         "severity": "mild",
         "status": "requires_verification",
         "note": "Discrepancy between nursing note (NKDA) and physician note (ibuprofen allergy)"
@@ -33,7 +33,7 @@
   "expected_flags_if_incorrect": {
     "expected_flags": [
     {
-       "claim": "Sin alergias conocidas (NKDA)",
+       "claim": "No known allergies (NKDA)",
        "failure_type": "CONTRADICTION",
        "layer": "LAYER_3_CONTRADICTION",
        "severity": "HIGH",
@@ -41,11 +41,11 @@
        "explanation": "The summary states NKDA but the source note contains a nursing entry documenting an ibuprofen allergy. The contradiction is unresolved in the source — the summary should not present one version as definitive without flagging the inconsistency."
     },
     {
-       "claim": "AINEs omitidos sin justificación en el plan",
+       "claim": "NSAIDs omitted without justification in plan",
        "failure_type": "CRITICAL_OMISSION",
        "layer": "LAYER_4_CRITICAL",
        "severity": "HIGH",
-       "evidence": "EVITAR AINEs hasta aclarar estado alérgico",
+       "evidence": "AVOID NSAIDs until allergy status clarified",
        "explanation": "The summary omits the explicit instruction to avoid NSAIDs and the pending allergy clarification — clinically relevant given the unresolved ibuprofen allergy report."
     }
   ]

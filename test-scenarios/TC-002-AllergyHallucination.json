@@ -7,15 +7,15 @@
   "expected_severity": "CRITICAL",
   "demo_scenario": true,
   "clinical_note": {
-    "language": "es",
-    "content": "Paciente femenina, 32 años. Consulta ambulatoria.\n\nMotivo de consulta: Infección respiratoria alta de 3 días de evolución.\n\nSíntomas: Odinofagia, rinorrea, tos seca.\n\nAlergias: Sin alergias conocidas (NKDA).\n\nExamen físico:\n- Temperatura: 38.2°C\n- Faringe eritematosa sin exudado\n- Ganglios cervicales levemente aumentados\n- Auscultación pulmonar: murmullo vesicular conservado\n\nDiagnóstico: Infección respiratoria alta viral.\n\nPlan:\n- Reposo relativo\n- Hidratación abundante\n- Paracetamol 500mg c/8h si fiebre >38°C\n- Sin prescripción antibiótica por el momento (cuadro viral)\n- Consultar si empeora o persiste >5 días"
+    "language": "en",
+    "content": "Female patient, 32 years old. Outpatient visit.\n\nReason for visit: Upper respiratory infection of 3 days evolution.\n\nSymptoms: Odynophagia, rhinorrhea, dry cough.\n\nAllergies: No known allergies (NKDA).\n\nPhysical examination:\n- Temperature: 38.2°C\n- Erythematous pharynx without exudate\n- Slightly enlarged cervical lymph nodes\n- Pulmonary auscultation: preserved vesicular murmur\n\nDiagnosis: Viral upper respiratory infection.\n\nPlan:\n- Relative rest\n- Abundant hydration\n- Paracetamol 500mg q8h if fever >38°C\n- No antibiotic prescription for now (viral picture)\n- Consult if worsens or persists >5 days"
   },
   "hallucinated_summary": {
     "description": "This is the INCORRECT summary the agent might produce",
-    "summary_text": "Paciente femenina de 32 años con infección respiratoria alta. Paciente con alergia documentada a penicilina. Se evita prescripción de amoxicilina por restricción alérgica. Temperatura 38.2°C. Plan: reposo, hidratación, paracetamol.",
+    "summary_text": "Female patient, 32 years old, with upper respiratory infection. Patient with documented penicillin allergy. Amoxicillin prescription avoided due to allergic restriction. Temperature 38.2°C. Plan: rest, hydration, paracetamol.",
     "diagnoses": [
       {
-        "diagnosis": "Infección respiratoria alta",
+        "diagnosis": "Upper respiratory infection",
         "status": "confirmed"
       }
     ],
@@ -28,7 +28,7 @@
     ],
     "allergies": [
       {
-        "allergen": "Penicilina",
+        "allergen": "Penicillin",
         "reaction": "documented allergy",
         "severity": "unknown"
       }
@@ -36,7 +36,7 @@
   },
   "expected_flags": [
     {
-      "claim": "Paciente con alergia documentada a penicilina",
+      "claim": "Patient with documented penicillin allergy",
       "failure_type": "CONTRADICTION",
       "layer": "LAYER_3_CONTRADICTION",
       "severity": "CRITICAL",
@@ -44,11 +44,11 @@
       "explanation": "Source explicitly states NKDA (No Known Drug Allergies). Summary claims documented penicillin allergy - a direct and dangerous contradiction."
     },
     {
-      "claim": "Se evita prescripción de amoxicilina por restricción alérgica",
+      "claim": "Amoxicillin prescription avoided due to allergic restriction",
       "failure_type": "HALLUCINATION",
       "layer": "LAYER_2_TRACE",
       "severity": "HIGH",
-      "evidence": "Sin prescripción antibiótica por el momento (cuadro viral)",
+      "evidence": "No antibiotic prescription for now (viral picture)",
       "explanation": "The reason for no antibiotics is viral etiology, not an allergy restriction that doesn't exist."
     }
   ],

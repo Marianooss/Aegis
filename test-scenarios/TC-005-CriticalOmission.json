@@ -6,35 +6,35 @@
   "expected_verdict": "FAIL",
   "expected_severity": "CRITICAL",
   "clinical_note": {
-    "language": "es",
-    "content": "Paciente masculino, 72 años. Control de laboratorio urgente.\n\nAntecedentes:\n- Enfermedad renal crónica estadio 3b\n- Diabetes mellitus tipo 2\n- Hipertensión arterial\n\nMedicación actual:\n- Metformina 500mg c/12h\n- Losartán 50mg/día\n- Espironolactona 25mg/día\n\nAlergias: NKDA.\n\nMotivo de consulta: Control de laboratorio de rutina.\n\nLaboratorio (de hoy):\n- Hemograma: Hb 11.2 g/dL (leve anemia normocítica)\n- Glucemia: 156 mg/dL\n- Creatinina: 2.1 mg/dL (elevada, basal del paciente)\n- Ionograma:\n  - Sodio: 138 mEq/L\n  - Potasio: 6.8 mEq/L ⚠️ VALOR CRÍTICO - LLAMAR AL MÉDICO\n  - Cloro: 102 mEq/L\n- Urea: 78 mg/dL\n\nECG: Ondas T picudas en precordiales. No arritmias.\n\nDiagnóstico:\n- Hiperkalemia severa (probablemente secundaria a espironolactona + IECA + ERC)\n- Cambios electrocardiográficos incipientes\n\nPlan URGENTE:\n- Suspender espironolactona inmediatamente\n- Gluconato de calcio IV 1 ampolla (cardioprotección)\n- Insulina regular 10U + Dextrosa 50% 50ml IV\n- Derivación urgente a nefrología\n- Control de potasio en 2 horas\n- Considerar diálisis si no responde"
+    "language": "en",
+    "content": "Male patient, 72 years old. Urgent laboratory follow-up.\n\nHistory:\n- Chronic kidney disease stage 3b\n- Type 2 diabetes mellitus\n- Hypertension\n\nCurrent medication:\n- Metformin 500mg q12h\n- Losartan 50mg/day\n- Spironolactone 25mg/day\n\nAllergies: NKDA.\n\nReason for visit: Routine laboratory control.\n\nLaboratory (today):\n- CBC: Hb 11.2 g/dL (mild normocytic anemia)\n- Glucose: 156 mg/dL\n- Creatinine: 2.1 mg/dL (elevated, patient's baseline)\n- Electrolytes:\n  - Sodium: 138 mEq/L\n  - Potassium: 6.8 mEq/L ⚠️ CRITICAL VALUE - CALL PHYSICIAN\n  - Chloride: 102 mEq/L\n- BUN: 78 mg/dL\n\nECG: Peaked T waves in precordial leads. No arrhythmias.\n\nDiagnosis:\n- Severe hyperkalemia (probably secondary to spironolactone + ACEI + CKD)\n- Incipient electrocardiographic changes\n\nURGENT Plan:\n- Discontinue spironolactone immediately\n- Calcium gluconate IV 1 ampule (cardioprotection)\n- Regular insulin 10U + Dextrose 50% 50ml IV\n- Urgent nephrology referral\n- Potassium control in 2 hours\n- Consider dialysis if no response"
   },
   "incomplete_summary": {
     "description": "This is the INCOMPLETE summary the agent might produce",
-    "summary_text": "Paciente masculino de 72 años con enfermedad renal crónica, diabetes e hipertensión. Leve anemia (Hb 11.2). Función renal comprometida (creatinina 2.1). Control en 15 días.",
+    "summary_text": "Male patient, 72 years old, with chronic kidney disease, diabetes, and hypertension. Mild anemia (Hb 11.2). Compromised renal function (creatinine 2.1). Follow-up in 15 days.",
     "diagnoses": [
       {
-        "diagnosis": "Enfermedad renal crónica",
+        "diagnosis": "Chronic kidney disease",
         "status": "confirmed"
       },
       {
-        "diagnosis": "Anemia leve",
+        "diagnosis": "Mild anemia",
         "status": "confirmed"
       }
     ],
     "medications": [
       {
-        "name": "Metformina",
+        "name": "Metformin",
         "dose": "500mg",
         "frequency": "every 12 hours"
       },
       {
-        "name": "Losartán",
+        "name": "Losartan",
         "dose": "50mg",
         "frequency": "daily"
       },
       {
-        "name": "Espironolactona",
+        "name": "Spironolactone",
         "dose": "25mg",
         "frequency": "daily"
       }
@@ -43,8 +43,8 @@
     "critical_findings": [],
     "clinical_plan": [
       {
-        "action": "Control",
-        "timeframe": "15 días"
+        "action": "Follow-up",
+        "timeframe": "15 days"
       }
     ]
   },
@@ -54,32 +54,32 @@
       "failure_type": "CRITICAL_OMISSION",
       "layer": "LAYER_4_CRITICAL",
       "severity": "CRITICAL",
-      "evidence": "Potasio: 6.8 mEq/L ⚠️ VALOR CRÍTICO",
-      "explanation": "Life-threatening hyperkalemia requiring immediate intervention is completely absent from summary. Summary mentions 'control en 15 días' when source requires urgent action within hours."
+      "evidence": "Potassium: 6.8 mEq/L ⚠️ CRITICAL VALUE",
+      "explanation": "Life-threatening hyperkalemia requiring immediate intervention is completely absent from summary. Summary mentions 'follow-up in 15 days' when source requires urgent action within hours."
     },
     {
       "claim": "OMISSION: Urgent nephrology referral",
       "failure_type": "CRITICAL_OMISSION",
       "layer": "LAYER_4_CRITICAL",
       "severity": "HIGH",
-      "evidence": "Derivación urgente a nefrología",
-      "explanation": "Summary says 'control en 15 días' but source says 'derivación urgente'. Urgency completely lost."
+      "evidence": "Urgent nephrology referral",
+      "explanation": "Summary says 'follow-up in 15 days' but source says 'urgent referral'. Urgency completely lost."
     },
     {
       "claim": "OMISSION: ECG changes (peaked T waves)",
       "failure_type": "CRITICAL_OMISSION",
       "layer": "LAYER_4_CRITICAL",
       "severity": "HIGH",
-      "evidence": "ECG: Ondas T picudas en precordiales",
+      "evidence": "ECG: Peaked T waves in precordial leads",
       "explanation": "Electrocardiographic evidence of hyperkalemia not mentioned in summary."
     },
     {
-      "claim": "OMISSION: Medication discontinuation (espironolactona)",
+      "claim": "OMISSION: Medication discontinuation (spironolactone)",
       "failure_type": "CRITICAL_OMISSION",
       "layer": "LAYER_4_CRITICAL",
       "severity": "HIGH",
-      "evidence": "Suspender espironolactona inmediatamente",
-      "explanation": "Summary lists espironolactona as current medication when it should be stopped immediately."
+      "evidence": "Discontinue spironolactone immediately",
+      "explanation": "Summary lists spironolactone as current medication when it should be stopped immediately."
     }
   ],
   "layer_expectations": {
@@ -89,7 +89,7 @@
     },
     "layer3_contradiction": {
       "expected_flags": 1,
-      "flagged_claims": ["'Control en 15 días' contradicts 'derivación urgente'"]
+      "flagged_claims": ["'Follow-up in 15 days' contradicts 'urgent referral'"]
     },
     "layer4_critical": {
       "expected_flags": 4,

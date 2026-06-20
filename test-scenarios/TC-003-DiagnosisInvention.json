@@ -6,25 +6,25 @@
   "expected_verdict": "FAIL",
   "expected_severity": "CRITICAL",
   "clinical_note": {
-    "language": "es",
-    "content": "Paciente masculino, 58 años. Servicio de urgencias.\n\nMotivo de consulta: Tos productiva de 5 días de evolución con expectoración amarillenta.\n\nAntecedentes:\n- Tabaquismo activo (20 paquetes/año)\n- EPOC leve diagnosticado hace 2 años\n\nMedicación habitual:\n- Salbutamol inhalador a demanda\n\nAlergias: Alergia a sulfamidas (rash cutáneo).\n\nExamen físico:\n- Temperatura: 37.8°C\n- FR: 22 rpm\n- Saturación O2: 96% aire ambiente\n- Auscultación: Crepitantes en base derecha\n\nEstudios solicitados:\n- Radiografía de tórax: SOLICITADA, resultado pendiente\n- Hemograma y PCR: SOLICITADOS, resultados pendientes\n\nDiagnóstico diferencial:\n- Bronquitis aguda\n- Neumonía adquirida en la comunidad (a confirmar con Rx)\n\nPlan:\n- Esperar resultados de radiografía antes de decidir tratamiento\n- Hidratación\n- Nebulizaciones con salbutamol\n- Si Rx confirma neumonía: iniciar levofloxacino (evitar sulfamidas)\n- Reevaluación en 4-6 horas con resultados"
+    "language": "en",
+    "content": "Male patient, 58 years old. Emergency department.\n\nReason for visit: Productive cough of 5 days evolution with yellowish sputum.\n\nHistory:\n- Active smoking (20 pack-years)\n- Mild COPD diagnosed 2 years ago\n\nRegular medication:\n- Salbutamol inhaler as needed\n\nAllergies: Sulfonamide allergy (skin rash).\n\nPhysical examination:\n- Temperature: 37.8°C\n- RR: 22 rpm\n- O2 saturation: 96% room air\n- Auscultation: Crackles in right base\n\nRequested studies:\n- Chest X-ray: REQUESTED, result pending\n- CBC and CRP: REQUESTED, results pending\n\nDifferential diagnosis:\n- Acute bronchitis\n- Community-acquired pneumonia (to be confirmed with X-ray)\n\nPlan:\n- Wait for X-ray results before deciding treatment\n- Hydration\n- Salbutamol nebulizations\n- If X-ray confirms pneumonia: start levofloxacin (avoid sulfonamides)\n- Reevaluation in 4-6 hours with results"
   },
   "hallucinated_summary": {
     "description": "This is the INCORRECT summary the agent might produce",
-    "summary_text": "Paciente masculino de 58 años con EPOC. Diagnóstico confirmado: Neumonía bacteriana adquirida en la comunidad. Se indica antibioticoterapia con levofloxacino. Alergia a sulfamidas documentada.",
+    "summary_text": "Male patient, 58 years old, with COPD. Confirmed diagnosis: Community-acquired bacterial pneumonia. Antibiotic therapy with levofloxacin indicated. Documented sulfonamide allergy.",
     "diagnoses": [
       {
-        "diagnosis": "Neumonía bacteriana",
+        "diagnosis": "Bacterial pneumonia",
         "status": "confirmed"
       },
       {
-        "diagnosis": "EPOC",
+        "diagnosis": "COPD",
         "status": "confirmed"
       }
     ],
     "medications": [
       {
-        "name": "Levofloxacino",
+        "name": "Levofloxacin",
         "dose": "unspecified",
         "frequency": "unspecified",
         "status": "prescribed"
@@ -32,28 +32,28 @@
     ],
     "allergies": [
       {
-        "allergen": "Sulfamidas",
-        "reaction": "rash cutáneo",
+        "allergen": "Sulfonamides",
+        "reaction": "skin rash",
         "severity": "moderate"
       }
     ]
   },
   "expected_flags": [
     {
-      "claim": "Diagnóstico confirmado: Neumonía bacteriana",
+      "claim": "Confirmed diagnosis: Bacterial pneumonia",
       "failure_type": "HALLUCINATION",
       "layer": "LAYER_2_TRACE",
       "severity": "CRITICAL",
-      "evidence": "Neumonía adquirida en la comunidad (a confirmar con Rx)",
+      "evidence": "Community-acquired pneumonia (to be confirmed with X-ray)",
       "explanation": "Source explicitly states diagnosis is pending X-ray confirmation. Summary incorrectly reports it as confirmed."
     },
     {
-      "claim": "Se indica antibioticoterapia con levofloxacino",
+      "claim": "Antibiotic therapy with levofloxacin indicated",
       "failure_type": "CONTRADICTION",
       "layer": "LAYER_3_CONTRADICTION",
       "severity": "HIGH",
-      "evidence": "Si Rx confirma neumonía: iniciar levofloxacino",
-      "explanation": "Levofloxacino is conditional on X-ray confirmation, not yet prescribed."
+      "evidence": "If X-ray confirms pneumonia: start levofloxacin",
+      "explanation": "Levofloxacin is conditional on X-ray confirmation, not yet prescribed."
     }
   ],
   "layer_expectations": {
