@@ -157,7 +157,7 @@ Evidence of integration is verifiable directly from the repository:
 
 **Tool used:** Claude Code (Anthropic)
 
-**How Claude Code contributed to SENTINEL:**
+**How Claude Code contributed to AEGIS:**
 1. **Architecture and scaffolding** (Session 1): Generated the 4-layer Citation Enforcement engine prompts, JSON output schemas, test scenarios, and project specification.
 2. **Local testing infrastructure** (Session 2): Created the Node.js test harness (`scripts/test-layer.js`) and audit framework (`AUDIT.md`).
 3. **Document alignment** (Session 3): Audited 23 files against AGENTS.md v4.1 framework, created 8 missing documents, aligned 4 existing documents, and verified 9 invariants.
