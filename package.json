@@ -1,0 +1,17 @@
+{
+  "name": "aegis-clinical-validator",
+  "version": "1.0.2",
+  "description": "4-layer agentic validation pipeline for AI-generated clinical summaries — UiPath AgentHack 2026 Track 3",
+  "license": "MIT",
+  "scripts": {
+    "pipeline": "node src/core/pipeline.js",
+    "dashboard": "node src/dashboard/server.js",
+    "test": "node src/core/pipeline.js --test"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
