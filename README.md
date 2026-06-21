@@ -1,4 +1,4 @@
-# SENTINEL — Agentic AI Validator for Medical Records
+# Aegis — CI/CD for Regulated AI
 
 > **UiPath AgentHack 2026 · Track 3: UiPath Test Cloud**  
 > Deployed on UiPath Agent Builder · Tenant: `hackathon26_409`  
@@ -12,15 +12,15 @@ AI-generated clinical summaries are being integrated into healthcare workflows a
 
 Existing validation approaches rely on static rules or single-pass checks. They miss subtle clinical errors: a fabricated allergy, a conditional diagnosis presented as confirmed, a life-threatening lab value quietly omitted while the summary recommends a routine follow-up in 15 days.
 
-**SENTINEL is built to catch what single-pass validators miss.**
+**Aegis is built to catch what single-pass validators miss.**
 
 ---
 
-## What SENTINEL Does
+## What Aegis Does
 
-SENTINEL is a multi-agent system deployed on UiPath Automation Cloud. A MedicalRecordsSummarizer agent generates a concise clinical summary from a raw note. The SENTINEL Validator agent receives the note and the summary, runs a structured four-layer validation pipeline, and returns a structured verdict with flagged claims, severity classification, and an escalation decision. When escalation is required, an Action Center human task is triggered for physician review.
+Aegis is a multi-agent validation framework deployed on UiPath Automation Cloud. It generates test scenarios from clinical requirements, executes them through a 4-layer AI validation pipeline, auto-corrects failures, and escalates critical cases to human review via Action Center.
 
-Every output is traceable. Every flag cites the exact evidence from the source note.
+Every output is traceable. Every flag cites the exact evidence from the source note. Every run produces an exportable JSON audit record.
 
 ---
 
@@ -107,19 +107,18 @@ Layer 2 and Layer 3 run in parallel after Layer 1. Layer 4 runs independently �
 | Agent 2 — Validator | UiPath Agent Builder · Solution 6 · Autonomous |
 | Orchestration | UiPath Maestro · Solution 8 · BPMN |
 | Human-in-the-loop | UiPath Action Center · EscalationApp |
-| LLM | `anthropic.claude-sonnet-4-6` via AWS Bedrock |
+| LLM | `anthropic.claude-sonnet-4-6` · temperature=0 |
 | Connector | Anthropic Claude API v1.3.0 |
-| Connection | Anthropic Claude API #2 (live key in Orchestrator) |
-| Evaluation | UiPath Custom Evaluator (semantic similarity) |
 | Aggregation logic | `agents/sentinel/aggregator.js` (Node.js) |
+| Scenario Generator | `src/core/scenario-generator.js` (Node.js) |
 | Tenant | `hackathon26_409` · staging.uipath.com |
-| SENTINEL version | v1.0.2 |
+| Version | v1.0.2 |
 
 ### Deployment Status
 
 | Component | Status | Notes |
 |---|---|---|
-| Solution 6 — SENTINEL Validator | ✅ Deployed · v1.0.2 | Fully functional, 6 TCs executed |
+| Solution 6 — SENTINEL Validator | ✅ Deployed · v1.0.2 | Fully functional, 7 TCs executed |
 | Solution 7 — MedicalRecordsSummarizer | ✅ Deployed · v1.0.1 | Fully functional, pipeline tested |
 | Solution 8 — Maestro Orchestration | ⚠️ Built, publish blocked | See note below |
 | EscalationApp — Action Center | ✅ Built | HITL with Confirmed/Acceptable/FalsePositive |
@@ -196,36 +195,31 @@ Layer 2 and Layer 3 run in parallel after Layer 1. Layer 4 runs independently �
 
 ## Live Validation Results
 
-### v1.0.1 runs · June 19, 2026
+All results produced with `temperature=0`. Full export JSONs in `docs/exports/`.
 
-| TC | Name | Type | Verdict | Severity | escalate |
-|---|---|---|---|---|---|
-| TC-001 | Happy path borderline | Omission detection | REVIEW | — | true |
-| TC-002 | Allergy hallucination + STEMI | HALLUCINATION/CONTRADICTION | FAIL | CRITICAL | true |
-| TC-003 | Premature diagnosis confirmation | HALLUCINATION/CONTRADICTION | FAIL | CRITICAL | true |
-| TC-004 | Medication fabrication (Glibenclamide) | HALLUCINATION | FAIL | CRITICAL | true |
-| TC-005 | Critical value omission (K+ 6.8) | CRITICAL_OMISSION | FAIL | CRITICAL | true |
-| TC-006 | Internal contradiction in source | CONTRADICTION | FAIL | CRITICAL | true |
+| TC | Name | Verdict | Severity | Escalated | Flags | Outcome |
+|---|---|---|---|---|---|---|
+| TC-001 | Normal Clinical Note | FAIL | HIGH | true | 1 | AUTO-CORRECTED → PASS |
+| TC-002 | Allergy Hallucination | FAIL | CRITICAL | true | 3–5 | AUTO-CORRECTED → PASS |
+| TC-003 | Diagnosis Invention | FAIL | CRITICAL | true | 7 | AUTO-CORRECTED → PASS |
+| TC-004 | Medication Fabrication | FAIL | CRITICAL | true | 3 | AUTO-CORRECTED → PASS |
+| TC-005 | Critical Value Omission K⁺6.8 | FAIL | CRITICAL | true | 9–10 | AUTO-CORRECTED → PASS* |
+| TC-006 | Contradictory Source Note | FAIL | CRITICAL | true | 6 | AUTO-CORRECTED → PASS |
+| TC-007 | Pediatric Asthma — Discharge Hallucination | FAIL | CRITICAL | true | 13–14 | AUTO-CORRECTED → PASS |
 
-TC-002 evaluated by UiPath Custom Evaluator (`claude-sonnet-4-6`): **91/100 semantic similarity** against hand-crafted expected output.
+*TC-005 with 10 flags produced revalidation FAIL in one run — documented in `docs/DECISION_LOG.md` ADR-008 (single-pass correction limit on high-complexity cases).
 
-### v1.0.2 runs · June 19, 2026 · schema aligned with aggregator.js
-
-| TC | Verdict | overall_severity | escalate_to_human | breakdown |
-|---|---|---|---|---|
-| TC-002 | FAIL | CRITICAL | true | H:2 C:1 O:1 |
-| TC-005 standalone | FAIL | CRITICAL | true | H:1 C:0 O:8 |
-| TC-005 pipeline | FAIL | HIGH | true | H:1 C:0 O:3 |
-
-**TC-005 pipeline** = end-to-end two-agent run. MedicalRecordsSummarizer generated a summary that correctly captured K+ 6.8 mEq/L, ECG changes, and the urgent treatment plan. SENTINEL still flagged Metformin 500mg q12h as CRITICAL omission (contraindicated with creatinine 2.1 + CKD stage 3b), Losartan as HIGH (ARB contributing to hyperkalemia), and missing dialysis contingency. `escalate_to_human: true`. This demonstrates SENTINEL catches clinically significant gaps even in summaries that appear complete.
+**TC-001 note:** The summarizer added "within normal limits" as an interpretive conclusion not explicitly stated in the source note. SENTINEL correctly flagged this as an unsupported inference (CONTRADICTION/HIGH). The corrected summary removes the interpretation and presents raw lab values only. This demonstrates SENTINEL detecting not just fabrications, but undocumented clinical inferences.
 
 ### Notable detections
 
-**TC-002** — Fabricated penicillin allergy (source: NKDA). `claim_type: ALLERGY` + `NOT_FOUND` → `CRITICAL` per severity matrix. `escalate_to_human: true`. UiPath evaluator score: 91/100.
+**TC-002** — Fabricated penicillin allergy (source: NKDA). Direct contradiction caught by Layer 3. `escalate_to_human: true`.
 
-**TC-005 standalone** — "Follow-up in 15 days" detected as HALLUCINATION/CRITICAL — fabricated instruction not present in source. Real plan: K+ recheck in 2 hours, IV calcium gluconate, insulin + dextrose, emergent nephrology. 8 critical omissions. `overall_severity: CRITICAL`.
+**TC-005** — K⁺ 6.8 mEq/L (CRITICAL VALUE — CALL PHYSICIAN) absent from summary. Summary recommended "follow-up in 15 days." Layer 4 independent scan caught 6 critical omissions including ECG changes, spironolactone discontinuation, and dialysis contingency.
 
-**TC-006** — Most sophisticated detection: SENTINEL identified an internal contradiction *within the source note itself* — NKDA in historical record vs. ibuprofen allergy in same-day nursing note. `hallucination_detection: PASS` (NKDA is grounded in source — not fabricated, but contradicted by another section).
+**TC-006** — Most sophisticated detection: SENTINEL identified an internal contradiction *within the source note itself* — NKDA in historical record vs. ibuprofen allergy in same-day nursing note. Layer 3 flagged the unresolved conflict.
+
+**TC-007** — Generated by `src/core/scenario-generator.js` from natural language requirements. Not hand-authored. Discharge hallucination (source: ADMITTED, summary: discharged home) + SpO2 omissions + anaphylaxis severity downgrade. 13–14 flags across 3 layers.
 
 ---
 
