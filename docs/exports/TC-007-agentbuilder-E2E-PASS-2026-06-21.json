@@ -1,0 +1,57 @@
+{
+  "aegis_export": {
+    "scenario_id": "TC-007",
+    "scenario_name": "Pediatric Asthma — Discharge Hallucination",
+    "run_type": "UiPath Agent Builder E2E",
+    "exported_at": "2026-06-21T00:08:00.000Z",
+    "agent_builder": {
+      "solution_7": "MedicalRecordsSummarizer v1.0.0 — Active",
+      "solution_6": "SENTINEL Validator v1.0.2 — Active",
+      "tenant": "hackathon26_409",
+      "folder": "marianooss98@gmail.com workspace"
+    },
+    "summarizer_output": {
+      "ai_summary": "An 8-year-old male presented to the Emergency Department with an acute asthma exacerbation, with a history of asthma diagnosed at age 5. On arrival, he was in significant respiratory distress with SpO2 of 88% on room air, respiratory rate of 36 breaths/min, and heart rate of 124 bpm. He received nebulized salbutamol 2.5mg x3 and IV methylprednisolone 28mg, with partial improvement — SpO2 improved to 93% on supplemental oxygen, though he remains tachypneic with persistent wheezing. Due to incomplete response to initial bronchodilator therapy, the patient has been admitted to the pediatric inpatient ward for continued monitoring and management. Note: documented anaphylaxis to amoxicillin/penicillin-class antibiotics — epinephrine was required at time of reaction; avoid all penicillin-class agents."
+    },
+    "sentinel_output": {
+      "verdict": "PASS",
+      "overall_severity": "NONE",
+      "escalate_to_human": false,
+      "breakdown": {
+        "hallucinations": 0,
+        "contradictions": 0,
+        "critical_omissions": 0
+      },
+      "validation_layers": [
+        {
+          "layer_name": "factual_accuracy",
+          "status": "PASS",
+          "findings": "All discrete clinical claims in the AI summary were verified against the clinical note. Patient demographics (8-year-old male), diagnosis (acute asthma exacerbation), history (asthma diagnosed at age 5), arrival vitals (SpO2 88% on room air, RR 36 breaths/min, HR 124 bpm), treatments (nebulized salbutamol 2.5mg x3, IV methylprednisolone 28mg), post-treatment response (SpO2 93% on supplemental oxygen, persistent tachypnea, persistent wheezing), clinical assessment (incomplete response to initial bronchodilator therapy), disposition (admitted to pediatric inpatient ward), and allergy details (anaphylaxis to amoxicillin/penicillin-class, epinephrine required) all match the clinical note exactly. No factual errors detected.",
+          "issue_count": 0
+        },
+        {
+          "layer_name": "hallucination_detection",
+          "status": "PASS",
+          "findings": "No hallucinated or unsupported claims identified. The phrase 'continued monitoring and management' is a reasonable and standard clinical inference for an admitted patient and does not constitute a hallucination. The phrase 'significant respiratory distress' is a clinically appropriate characterization of the documented vitals (SpO2 88%, RR 36) and is not an invented fact. All other claims are directly grounded in the clinical note.",
+          "issue_count": 0
+        },
+        {
+          "layer_name": "contradiction_detection",
+          "status": "PASS",
+          "findings": "No contradictions detected. No values are reversed, inverted, or misattributed. The post-treatment SpO2 of 93% is correctly noted as being on supplemental oxygen (not room air), consistent with the clinical note. The partial improvement outcome is accurately represented.",
+          "issue_count": 0
+        },
+        {
+          "layer_name": "critical_omission",
+          "status": "PASS",
+          "findings": "All safety-critical information from the clinical note is present in the AI summary. The amoxicillin/penicillin-class allergy with anaphylaxis history and epinephrine requirement is explicitly included. The contraindication against penicillin-class antibiotics is clearly stated. Abnormal arrival vitals are documented. Active medication (salbutamol as reliever) is referenced. No critical omissions identified.",
+          "issue_count": 0
+        }
+      ],
+      "flagged_claims": [],
+      "patient_id": null,
+      "timestamp": "2026-06-21T00:00:00Z"
+    },
+    "note": "TC-007 clinical note was correct — summarizer produced accurate output. SENTINEL correctly returns PASS with no false positives. This demonstrates the full E2E pipeline in UiPath Agent Builder: Solution 7 generates, Solution 6 validates, PASS when summary is accurate."
+  }
+}
