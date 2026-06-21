@@ -27,6 +27,7 @@ function callClaude(system, userMsg, maxTokens = 2048) {
     const body = JSON.stringify({
       model: 'claude-sonnet-4-6',
       max_tokens: maxTokens,
+      temperature: 0,
       system,
       messages: [{ role: 'user', content: userMsg }]
     });

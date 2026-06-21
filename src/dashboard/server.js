@@ -63,7 +63,7 @@ const HTML = `<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>SENTINEL — AI Validation Framework</title>
+<title>AEGIS — CI/CD for Regulated AI</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#060A14;--bg2:#0C1220;--bg3:#111928;--teal:#00E5CC;--red:#FF3B47;--amber:#FFB020;--blue:#4D9EFF;--white:#F0F4FF;--dim:#4A5568;--dim2:#1A2535;}
@@ -72,8 +72,8 @@ body{background:var(--bg);color:var(--white);font-family:'JetBrains Mono',monosp
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,204,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,204,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
 header{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:14px 28px;border-bottom:1px solid rgba(0,229,204,.15);background:rgba(6,10,20,.95);}
 .logo{display:flex;align-items:center;gap:14px;}
-.logo-mark{width:34px;height:34px;border:2px solid var(--teal);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:var(--teal);}
-.logo-name{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;letter-spacing:4px;}
+.logo-mark{width:48px;height:48px;border-radius:6px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(0,229,204,.3);background:rgba(0,229,204,.06);box-shadow:0 0 14px rgba(0,229,204,.18);}
+.logo-name{font-family:'Cambria',Georgia,serif;font-weight:700;font-size:22px;letter-spacing:4px;color:var(--teal);}
 .logo-sub{font-size:9px;color:var(--dim);letter-spacing:2px;margin-top:2px;}
 .hdr-right{display:flex;align-items:center;gap:20px;}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 8px var(--teal);animation:pulse 2s infinite;}
@@ -155,15 +155,19 @@ header{position:relative;z-index:10;display:flex;align-items:center;justify-cont
 ::-webkit-scrollbar{width:3px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--dim2);border-radius:2px;}
+#splash{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg);transition:opacity .8s ease;}
+#splash.fade{opacity:0;pointer-events:none;}
+#splash img{width:90vw;height:auto;max-width:none;max-height:90vh;object-fit:contain;filter:drop-shadow(0 0 32px rgba(0,229,204,.3));}
 </style>
 </head>
 <body>
+<div id="splash"><img src="/Aegis-logo.png" alt="Aegis"></div>
 <header>
   <div class="logo">
-    <div class="logo-mark">S</div>
+    <div class="logo-mark"><img src="/aegis-shield.png" style="width:48px;height:48px;object-fit:cover;border-radius:4px;" alt="Aegis"></div>
     <div>
-      <div class="logo-name">SENTINEL</div>
-      <div class="logo-sub">AI VALIDATION FRAMEWORK · UiPath AgentHack 2026</div>
+      <div class="logo-name">AEGIS</div>
+      <div class="logo-sub">CI/CD FOR REGULATED AI · UiPath AgentHack 2026</div>
     </div>
   </div>
   <div class="hdr-right">
@@ -294,7 +298,6 @@ function reset(){
 
 function exportResult(){
   if(!lastResult)return;
-  const sc=SCENARIOS.find(s=>s.id===lastResult.scenario_id);
   const payload={
     aegis_export:{
       scenario_id:lastResult.scenario_id,
@@ -403,10 +406,10 @@ async function run(){
     }
     S.tot++;metrics();
     lastResult={
-      scenario_id: sel,
-      scenario_name: SCENARIOS.find(s=>s.id===sel)?.name||sel,
-      exported_at: new Date().toISOString(),
-      pipeline_result: data
+      scenario_id:sel,
+      scenario_name:SCENARIOS.find(s=>s.id===sel)?.name||sel,
+      exported_at:new Date().toISOString(),
+      pipeline_result:data
     };
     document.getElementById('exsec').style.display='block';
   }catch(e){
@@ -416,11 +419,37 @@ async function run(){
 }
 
 renderList();
+setTimeout(()=>{document.getElementById('splash').classList.add('fade');},2800);
+setTimeout(()=>{document.getElementById('splash').style.display='none';},3600);
 </script>
 </body>
 </html>`;
 
 const server = http.createServer(async (req, res) => {
+  if (req.method === 'GET' && req.url === '/aegis-shield.png') {
+    try {
+      const imgPath = path.join(__dirname, 'aegis-shield.png');
+      const img = fs.readFileSync(imgPath);
+      res.writeHead(200, { 'Content-Type': 'image/png' });
+      res.end(img);
+    } catch(e) {
+      res.writeHead(404); res.end();
+    }
+    return;
+  }
+
+  if (req.method === 'GET' && req.url === '/Aegis-logo.png') {
+    try {
+      const imgPath = path.join(__dirname, 'Aegis-logo.png');
+      const img = fs.readFileSync(imgPath);
+      res.writeHead(200, { 'Content-Type': 'image/png' });
+      res.end(img);
+    } catch(e) {
+      res.writeHead(404); res.end();
+    }
+    return;
+  }
+
   if (req.method === 'GET' && req.url === '/') {
     res.writeHead(200, { 'Content-Type': 'text/html' });
     res.end(HTML);

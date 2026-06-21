@@ -98,4 +98,46 @@ Three consecutive runs of TC-007 (Pediatric Asthma — Discharge Hallucination) 
 
 ---
 
+## ADR-008 — Correction Agent single-pass limitation on high-complexity cases
+
+**Date:** 2026-06-21
+**Status:** DOCUMENTED · Known limitation
+
+### Observation
+
+TC-005 (K⁺ 6.8 mEq/L — Critical Value Omission) produced revalidation: FAIL
+in one run (02:02:27Z) with 10 flags detected.
+
+Same TC in prior run (01:53:26Z) with 9 flags: revalidation PASS.
+
+### Root cause
+
+TC-005 has the highest omission density in the suite (9–10 critical omissions).
+The Correction Agent operates in a single pass — it receives all flagged claims
+and attempts to rewrite the summary once. When flag count exceeds ~8–9 items,
+the correction may not fully resolve every omission in one pass.
+
+### Clinical significance
+
+K⁺ 6.8 mEq/L with ECG changes is the most clinically severe scenario in the
+suite. A single-pass correction failing on this case means the system correctly
+escalates — the revalidation FAIL triggers human review, which is the
+appropriate clinical response for a life-threatening emergency.
+
+### Production recommendation
+
+For cases with >7 flagged claims:
+- Option A: Run correction in two passes (correct → revalidate → correct again)
+- Option B: Skip correction entirely and escalate directly to human review
+- Option C: Flag density threshold (>7 flags = auto-escalate, no correction attempt)
+
+Option C is the most clinically conservative and architecturally simplest.
+
+### Evidence
+
+- TC-005 Run A (01:53Z): 9 flags → corrected → revalidation PASS
+- TC-005 Run B (02:02Z): 10 flags → corrected → revalidation FAIL
+
+---
+
 *Aegis Decision Log — github.com/Marianooss/Aegis*
