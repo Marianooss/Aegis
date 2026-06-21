@@ -1,0 +1,26 @@
+{
+  "aegis_export": {
+    "scenario_id": "TC-001",
+    "scenario_name": "Normal Clinical Note",
+    "exported_at": "2026-06-21T02:17:26.544Z",
+    "verdict": "FAIL",
+    "overall_severity": "HIGH",
+    "escalated": true,
+    "total_flagged": 1,
+    "flagged_claims": [
+      {
+        "claim_text": "Recent lab results are within normal limits",
+        "failure_type": "CONTRADICTION",
+        "severity": "HIGH",
+        "source_evidence": "Glucose: 95 mg/dL\n- Creatinine: 0.9 mg/dL\n- Potassium: 4.2 mEq/L",
+        "explanation": "The source note lists raw lab values without explicitly characterizing them as 'within normal limits'; the normality interpretation is an inference not stated in the source, creating clinical ambiguity."
+      }
+    ],
+    "flawed_summary": "45-year-old male presenting for hypertension follow-up. Hypertension diagnosed 3 years ago, currently controlled on Enalapril 10mg/day and Aspirin 100mg/day. BP at visit: 128/82 mmHg, HR 72 bpm, weight 78 kg. Recent labs (1 month ago) within normal limits: glucose 95 mg/dL, creatinine 0.9 mg/dL, potassium 4.2 mEq/L. No known drug allergies. Plan: continue current treatment, low-sodium diet, and follow-up in 3 months.",
+    "corrected_summary": "45-year-old male presenting for hypertension follow-up. Hypertension diagnosed 3 years ago, currently controlled on Enalapril 10mg/day and Aspirin 100mg/day. BP at visit: 128/82 mmHg, HR 72 bpm, weight 78 kg. Recent labs (1 month ago): glucose 95 mg/dL, creatinine 0.9 mg/dL, potassium 4.2 mEq/L. No known drug allergies. Plan: continue current treatment, low-sodium diet, and follow-up in 3 months.",
+    "revalidation": {
+      "verdict": "PASS",
+      "overall_severity": "HIGH"
+    }
+  }
+}
