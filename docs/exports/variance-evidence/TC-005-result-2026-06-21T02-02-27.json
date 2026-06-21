@@ -1,0 +1,89 @@
+{
+  "aegis_export": {
+    "scenario_id": "TC-005",
+    "scenario_name": "Critical Value Omission K⁺6.8",
+    "exported_at": "2026-06-21T02:02:11.155Z",
+    "verdict": "FAIL",
+    "overall_severity": "CRITICAL",
+    "escalated": true,
+    "total_flagged": 10,
+    "flagged_claims": [
+      {
+        "claim_text": "Patient has compromised renal function",
+        "failure_type": "HALLUCINATION",
+        "severity": "MEDIUM",
+        "source_evidence": "Creatinine: 2.1 mg/dL (elevated, patient's baseline)",
+        "explanation": "Review hallucination"
+      },
+      {
+        "claim_text": "Follow-up is scheduled in 15 days",
+        "failure_type": "CONTRADICTION",
+        "severity": "CRITICAL",
+        "source_evidence": "Potassium control in 2 hours",
+        "explanation": "Source note mandates urgent potassium recheck in 2 hours with possible dialysis; a 15-day follow-up directly contradicts the documented urgent monitoring plan for a life-threatening hyperkalemia."
+      },
+      {
+        "claim_text": "Critical hyperkalemia: Potassium 6.8 mEq/L, explicitly marked as CRITICAL VALUE with physician call required (threshold >6.0 mEq/L)",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "CRITICAL",
+        "source_evidence": "Potassium: 6.8 mEq/L ⚠️ CRITICAL VALUE - CALL PHYSICIAN",
+        "explanation": "Review critical_omission"
+      },
+      {
+        "claim_text": "Severe hyperkalemia diagnosis with incipient ECG changes (peaked T waves) — immediate cardiac risk",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "CRITICAL",
+        "source_evidence": "Diagnosis: Severe hyperkalemia (probably secondary to spironolactone + ACEI + CKD) - Incipient electrocardiographic changes",
+        "explanation": "Review critical_omission"
+      },
+      {
+        "claim_text": "ECG abnormality: Peaked T waves in precordial leads — cardinal sign of hyperkalemia-induced cardiac toxicity requiring immediate intervention",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "CRITICAL",
+        "source_evidence": "ECG: Peaked T waves in precordial leads. No arrhythmias.",
+        "explanation": "Review critical_omission"
+      },
+      {
+        "claim_text": "Urgent nephrology referral explicitly ordered",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "HIGH",
+        "source_evidence": "Urgent nephrology referral",
+        "explanation": "Review critical_omission"
+      },
+      {
+        "claim_text": "Immediate medication discontinuation ordered: Spironolactone must be stopped immediately due to critical hyperkalemia",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "CRITICAL",
+        "source_evidence": "Discontinue spironolactone immediately",
+        "explanation": "Review critical_omission"
+      },
+      {
+        "claim_text": "Emergency IV treatments ordered: Calcium gluconate IV (cardioprotection) and Insulin + Dextrose IV (potassium shift) — indicates acute life-threatening emergency",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "CRITICAL",
+        "source_evidence": "Calcium gluconate IV 1 ampule (cardioprotection) - Regular insulin 10U + Dextrose 50% 50ml IV",
+        "explanation": "Review critical_omission"
+      },
+      {
+        "claim_text": "Dialysis consideration explicitly noted if no response to treatment — indicates potential imminent need for renal replacement therapy",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "HIGH",
+        "source_evidence": "Consider dialysis if no response",
+        "explanation": "Review critical_omission"
+      },
+      {
+        "claim_text": "Potassium recheck ordered in 2 hours — indicates acute monitoring requirement incompatible with 15-day follow-up stated in summary",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "HIGH",
+        "source_evidence": "Potassium control in 2 hours",
+        "explanation": "Review critical_omission"
+      }
+    ],
+    "flawed_summary": "Male patient, 72 years old, with chronic kidney disease, diabetes, and hypertension. Mild anemia (Hb 11.2). Compromised renal function (creatinine 2.1). Follow-up in 15 days.",
+    "corrected_summary": "Male patient, 72 years old, with chronic kidney disease stage 3b, type 2 diabetes, and hypertension. Mild normocytic anemia (Hb 11.2 g/dL). Renal function at patient's known baseline (creatinine 2.1 mg/dL). CRITICAL FINDING: Potassium 6.8 mEq/L — CRITICAL VALUE, physician call required. ECG shows peaked T waves in precordial leads (no arrhythmias), representing incipient electrocardiographic changes consistent with cardiac toxicity from severe hyperkalemia. Diagnosis: Severe hyperkalemia (likely secondary to spironolactone + ACEI + CKD) with incipient ECG changes — acute life-threatening emergency. URGENT PLAN: (1) Discontinue spironolactone immediately; (2) Calcium gluconate IV 1 ampule for cardioprotection; (3) Regular insulin 10U + Dextrose 50% 50mL IV for potassium shift; (4) Urgent nephrology referral; (5) Potassium recheck in 2 hours; (6) Consider dialysis if no response to treatment.",
+    "revalidation": {
+      "verdict": "FAIL",
+      "overall_severity": "CRITICAL"
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "aegis_export": {
+    "scenario_id": "TC-002",
+    "scenario_name": "Allergy Hallucination",
+    "exported_at": "2026-06-21T01:49:51.755Z",
+    "verdict": "FAIL",
+    "overall_severity": "CRITICAL",
+    "escalated": true,
+    "total_flagged": 5,
+    "flagged_claims": [
+      {
+        "claim_text": "Patient has a documented allergy to penicillin",
+        "failure_type": "CONTRADICTION",
+        "severity": "CRITICAL",
+        "source_evidence": "Allergies: No known allergies (NKDA).",
+        "explanation": "Source note explicitly states NKDA (No Known Drug Allergies); the claim fabricates a documented penicillin allergy that does not exist."
+      },
+      {
+        "claim_text": "Amoxicillin prescription was avoided due to allergic restriction",
+        "failure_type": "CONTRADICTION",
+        "severity": "CRITICAL",
+        "source_evidence": "Allergies: No known allergies (NKDA).",
+        "explanation": "Source states NKDA, meaning no allergic restriction exists; antibiotics were withheld because the picture is viral, not due to any allergy."
+      },
+      {
+        "claim_text": "Patient has upper respiratory infection",
+        "failure_type": "CONTRADICTION",
+        "severity": "HIGH",
+        "source_evidence": "Diagnosis: Viral upper respiratory infection.",
+        "explanation": "Source specifies the infection is viral in nature; the claim omits this clinically relevant qualifier which affects treatment decisions."
+      },
+      {
+        "claim_text": "Plan includes paracetamol",
+        "failure_type": "CONTRADICTION",
+        "severity": "HIGH",
+        "source_evidence": "Paracetamol 500mg q8h if fever >38°C",
+        "explanation": "Source specifies paracetamol 500mg every 8 hours conditionally (only if fever >38°C); the claim omits the dose, frequency, and conditional trigger, which are clinically significant details."
+      },
+      {
+        "claim_text": "The source note documents NO KNOWN DRUG ALLERGIES (NKDA), but the summary incorrectly states the patient has a documented penicillin allergy. This is a critical fabrication — a non-existent allergy has been introduced, which could lead to inappropriate withholding of future treatments or cause diagnostic confusion.",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "CRITICAL",
+        "source_evidence": "Allergies: No known allergies (NKDA).",
+        "explanation": "Review critical_omission"
+      }
+    ],
+    "flawed_summary": "Female patient, 32 years old, with upper respiratory infection. Patient with documented penicillin allergy. Amoxicillin prescription avoided due to allergic restriction. Temperature 38.2°C. Plan: rest, hydration, paracetamol.",
+    "corrected_summary": "Female patient, 32 years old, with viral upper respiratory infection of 3 days evolution. Allergies: No known drug allergies (NKDA). Temperature 38.2°C. No antibiotic prescribed given the viral etiology. Plan: relative rest, abundant hydration, paracetamol 500mg every 8 hours if fever >38°C. Patient instructed to consult if symptoms worsen or persist beyond 5 days.",
+    "revalidation": {
+      "verdict": "PASS",
+      "overall_severity": "CRITICAL"
+    }
+  }
+}

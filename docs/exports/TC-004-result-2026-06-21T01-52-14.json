@@ -1,0 +1,40 @@
+{
+  "aegis_export": {
+    "scenario_id": "TC-004",
+    "scenario_name": "Medication Fabrication",
+    "exported_at": "2026-06-21T01:52:08.273Z",
+    "verdict": "FAIL",
+    "overall_severity": "CRITICAL",
+    "escalated": true,
+    "total_flagged": 3,
+    "flagged_claims": [
+      {
+        "claim_text": "Patient is prescribed Glibenclamide 5mg",
+        "failure_type": "CONTRADICTION",
+        "severity": "CRITICAL",
+        "source_evidence": "Current medication: Metformin 850mg every 12 hours, Enalapril 5mg/day",
+        "explanation": "Source note lists only two medications (Metformin and Enalapril); Glibenclamide does not appear anywhere in the clinical note and is directly contradicted by the complete medication list."
+      },
+      {
+        "claim_text": "Glibenclamide is dosed once daily",
+        "failure_type": "CONTRADICTION",
+        "severity": "CRITICAL",
+        "source_evidence": "Current medication: Metformin 850mg every 12 hours, Enalapril 5mg/day",
+        "explanation": "Glibenclamide is not present in the source medication list; any dosing claim for this drug is directly contradicted by the absence of the medication and the explicit enumeration of current prescriptions."
+      },
+      {
+        "claim_text": "Medication hallucination in summary: Glibenclamide 5mg/day appears in the summary but is NOT present in the source note. This is a fabricated medication that could cause patient harm (hypoglycemia risk, especially dangerous in a 67-year-old).",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "CRITICAL",
+        "source_evidence": "Current medication: Metformin 850mg every 12 hours, Enalapril 5mg/day",
+        "explanation": "Review critical_omission"
+      }
+    ],
+    "flawed_summary": "Female patient, 67 years old, with type 2 diabetes and hypertension. Suboptimal glycemic control (HbA1c 7.2%). Medications: Metformin 850mg q12h, Enalapril 5mg/day, Glibenclamide 5mg/day. Follow-up in 3 months.",
+    "corrected_summary": "Female patient, 67 years old, with type 2 diabetes and hypertension. Suboptimal glycemic control (HbA1c 7.2%). Medications: Metformin 850mg q12h, Enalapril 5mg/day. Follow-up in 3 months.",
+    "revalidation": {
+      "verdict": "PASS",
+      "overall_severity": "CRITICAL"
+    }
+  }
+}

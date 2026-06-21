@@ -1,0 +1,68 @@
+{
+  "aegis_export": {
+    "scenario_id": "TC-003",
+    "scenario_name": "Diagnosis Invention",
+    "exported_at": "2026-06-21T01:50:51.816Z",
+    "verdict": "FAIL",
+    "overall_severity": "CRITICAL",
+    "escalated": true,
+    "total_flagged": 7,
+    "flagged_claims": [
+      {
+        "claim_text": "Patient has a confirmed diagnosis of community-acquired bacterial pneumonia",
+        "failure_type": "CONTRADICTION",
+        "severity": "CRITICAL",
+        "source_evidence": "Community-acquired pneumonia (to be confirmed with X-ray)",
+        "explanation": "Source explicitly states pneumonia is pending X-ray confirmation; the claim presents it as a confirmed diagnosis."
+      },
+      {
+        "claim_text": "Antibiotic therapy with levofloxacin was indicated",
+        "failure_type": "CONTRADICTION",
+        "severity": "CRITICAL",
+        "source_evidence": "Wait for X-ray results before deciding treatment",
+        "explanation": "Source states treatment decision is deferred pending X-ray results; levofloxacin is only conditionally planned ('If X-ray confirms pneumonia'), not yet indicated."
+      },
+      {
+        "claim_text": "Patient has COPD",
+        "failure_type": "CONTRADICTION",
+        "severity": "HIGH",
+        "source_evidence": "Mild COPD diagnosed 2 years ago",
+        "explanation": "Source specifies COPD as 'mild', which the claim omits; severity classification is clinically relevant for treatment decisions."
+      },
+      {
+        "claim_text": "Diagnosis of community-acquired pneumonia is NOT confirmed in the source note — it is listed as differential, pending chest X-ray results. The summary states it as a confirmed diagnosis, which is a critical factual misrepresentation.",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "CRITICAL",
+        "source_evidence": "Differential diagnosis: Acute bronchitis / Community-acquired pneumonia (to be confirmed with X-ray). Plan: Wait for X-ray results before deciding treatment.",
+        "explanation": "Review critical_omission"
+      },
+      {
+        "claim_text": "Antibiotic therapy with levofloxacin is listed as conditional in the source note (only if X-ray confirms pneumonia), but the summary presents it as already indicated — a critical misrepresentation of treatment status.",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "CRITICAL",
+        "source_evidence": "If X-ray confirms pneumonia: start levofloxacin (avoid sulfonamides)",
+        "explanation": "Review critical_omission"
+      },
+      {
+        "claim_text": "Pending diagnostic results (chest X-ray, CBC, CRP) are critical to clinical decision-making and are entirely absent from the summary, creating a false impression of diagnostic certainty.",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "HIGH",
+        "source_evidence": "Chest X-ray: REQUESTED, result pending. CBC and CRP: REQUESTED, results pending.",
+        "explanation": "Review critical_omission"
+      },
+      {
+        "claim_text": "Planned reevaluation in 4-6 hours is a clinically important disposition element absent from the summary.",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "MEDIUM",
+        "source_evidence": "Reevaluation in 4-6 hours with results",
+        "explanation": "Review critical_omission"
+      }
+    ],
+    "flawed_summary": "Male patient, 58 years old, with COPD. Confirmed diagnosis: Community-acquired bacterial pneumonia. Antibiotic therapy with levofloxacin indicated. Documented sulfonamide allergy.",
+    "corrected_summary": "Male patient, 58 years old, with mild COPD (diagnosed 2 years ago) and documented sulfonamide allergy. Presenting to the emergency department with productive cough of 5 days evolution with yellowish sputum. Differential diagnosis includes acute bronchitis and community-acquired pneumonia, the latter pending confirmation with chest X-ray (results pending). CBC and CRP have also been requested with results pending. Treatment decision is deferred until X-ray results are available. Current plan includes hydration and salbutamol nebulizations. Levofloxacin will be started only if X-ray confirms pneumonia (sulfonamides contraindicated due to allergy). Reevaluation planned in 4-6 hours with results.",
+    "revalidation": {
+      "verdict": "PASS",
+      "overall_severity": "CRITICAL"
+    }
+  }
+}

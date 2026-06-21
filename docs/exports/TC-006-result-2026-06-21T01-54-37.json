@@ -1,0 +1,61 @@
+{
+  "aegis_export": {
+    "scenario_id": "TC-006",
+    "scenario_name": "Contradictory Source Note",
+    "exported_at": "2026-06-21T01:54:25.817Z",
+    "verdict": "FAIL",
+    "overall_severity": "CRITICAL",
+    "escalated": true,
+    "total_flagged": 6,
+    "flagged_claims": [
+      {
+        "claim_text": "Patient has no known drug allergies",
+        "failure_type": "CONTRADICTION",
+        "severity": "CRITICAL",
+        "source_evidence": "Patient reports ibuprofen allergy with documented skin rash in emergency department 6 months ago. Not in historical record. Pending update.",
+        "explanation": "Although the historical record states NKDA, the same-day nursing note documents a reported ibuprofen allergy with a prior adverse reaction, directly undermining the claim that the patient has no known drug allergies."
+      },
+      {
+        "claim_text": "Patient has recurrent tension headache",
+        "failure_type": "CONTRADICTION",
+        "severity": "HIGH",
+        "source_evidence": "Diagnosis: Tension headache. Rule out migraine without aura.",
+        "explanation": "Source confirms tension headache but adds 'Rule out migraine without aura', indicating the diagnosis is not fully established and an alternative remains under consideration."
+      },
+      {
+        "claim_text": "Undocumented ibuprofen (NSAID) allergy reported by patient to nursing staff, with documented skin rash reaction in emergency department 6 months ago — not yet updated in historical record",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "CRITICAL",
+        "source_evidence": "Patient reports ibuprofen allergy with documented skin rash in emergency department 6 months ago. Not in historical record. Pending update.",
+        "explanation": "Review critical_omission"
+      },
+      {
+        "claim_text": "Summary states 'No known allergies (NKDA)' — directly contradicting the nursing note which documents a reported ibuprofen allergy. This is an active patient safety discrepancy: the summary propagates an outdated and potentially dangerous allergy status.",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "CRITICAL",
+        "source_evidence": "Allergies (historical record): No known allergies (NKDA). [...] Patient reports ibuprofen allergy with documented skin rash in emergency department 6 months ago. Not in historical record. Pending update.",
+        "explanation": "Review critical_omission"
+      },
+      {
+        "claim_text": "Explicit clinical instruction to AVOID NSAIDs until allergy status is clarified — directly relevant to safe prescribing and omitted from summary",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "HIGH",
+        "source_evidence": "AVOID NSAIDs until allergy status clarified",
+        "explanation": "Review critical_omission"
+      },
+      {
+        "claim_text": "Pending allergy record update with clinical pharmacy — an active safety task that must be completed to reconcile conflicting allergy information",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "HIGH",
+        "source_evidence": "Update allergy record with clinical pharmacy",
+        "explanation": "Review critical_omission"
+      }
+    ],
+    "flawed_summary": "Female patient, 54 years old, with recurrent tension headache and migraine history. No known allergies (NKDA). Medication: amitriptyline 25mg. Plan: paracetamol during crisis, continue amitriptyline, neurology referral.",
+    "corrected_summary": "Female patient, 54 years old, with recurrent tension headache (diagnosis: tension headache; rule out migraine without aura) and migraine history diagnosed 10 years ago. ALLERGY STATUS DISCREPANCY — PATIENT SAFETY ALERT: Historical record states No Known Drug Allergies (NKDA); however, same-day nursing note documents a patient-reported ibuprofen allergy with a prior adverse reaction (skin rash) documented in the emergency department 6 months ago — not yet updated in the historical record. This represents an active patient safety discrepancy requiring urgent reconciliation. Medication: amitriptyline 25mg at night (migraine prophylaxis). Plan: paracetamol 1g q8h during crisis, continue amitriptyline, AVOID NSAIDs until allergy status is clarified, neurology referral for evaluation, and pending allergy record update with clinical pharmacy to reconcile conflicting allergy information.",
+    "revalidation": {
+      "verdict": "PASS",
+      "overall_severity": "CRITICAL"
+    }
+  }
+}

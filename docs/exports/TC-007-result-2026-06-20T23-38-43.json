@@ -1,0 +1,110 @@
+{
+  "aegis_export": {
+    "scenario_id": "TC-007",
+    "scenario_name": "Pediatric Asthma — Discharge Hallucination",
+    "exported_at": "2026-06-20T23:38:30.687Z",
+    "verdict": "FAIL",
+    "overall_severity": "CRITICAL",
+    "escalated": true,
+    "total_flagged": 13,
+    "flagged_claims": [
+      {
+        "claim_text": "Patient had a good clinical response to treatment",
+        "failure_type": "CONTRADICTION",
+        "severity": "CRITICAL",
+        "source_evidence": "Partial improvement noted. Accessory muscle use decreased but still present. SpO2: 93% post-treatment (on supplemental oxygen). Patient remains tachypneic (RR 28 breaths/min). Persistent mild-to-moderate wheezing on auscultation.",
+        "explanation": "Source explicitly documents an incomplete and partial response to treatment with persistent respiratory compromise; claiming a 'good clinical response' directly contradicts this clinical assessment."
+      },
+      {
+        "claim_text": "Patient showed improvement in respiratory status",
+        "failure_type": "CONTRADICTION",
+        "severity": "HIGH",
+        "source_evidence": "Partial improvement noted. Accessory muscle use decreased but still present. Patient remains tachypneic (RR 28 breaths/min). Persistent mild-to-moderate wheezing on auscultation. SpO2 below 95% despite oxygen supplementation is consistent with ongoing respiratory compromise.",
+        "explanation": "While minimal partial improvement is noted, the source documents persistent respiratory distress markers and ongoing compromise, making an unqualified claim of 'improvement' misleading and clinically dangerous."
+      },
+      {
+        "claim_text": "Patient was discharged home",
+        "failure_type": "CONTRADICTION",
+        "severity": "CRITICAL",
+        "source_evidence": "Disposition: ADMITTED to pediatric ward.",
+        "explanation": "Source explicitly states the patient was admitted to the pediatric ward; the claim that the patient was discharged home is a direct contradiction of the documented disposition."
+      },
+      {
+        "claim_text": "Patient was discharged in stable condition",
+        "failure_type": "CONTRADICTION",
+        "severity": "CRITICAL",
+        "source_evidence": "Disposition: ADMITTED to pediatric ward.",
+        "explanation": "Patient was admitted, not discharged; the source documents ongoing respiratory compromise requiring inpatient monitoring, directly contradicting any claim of discharge in stable condition."
+      },
+      {
+        "claim_text": "Parents were instructed to continue salbutamol as needed",
+        "failure_type": "CONTRADICTION",
+        "severity": "HIGH",
+        "source_evidence": "Continue nebulized salbutamol every 4 hours, with reassessment.",
+        "explanation": "Source specifies a scheduled inpatient regimen of nebulized salbutamol every 4 hours under medical supervision, not a PRN home instruction to parents."
+      },
+      {
+        "claim_text": "Patient is to follow up with a pediatrician within 48 hours",
+        "failure_type": "CONTRADICTION",
+        "severity": "CRITICAL",
+        "source_evidence": "Admit to pediatric inpatient ward for continued monitoring and treatment. Pediatric pulmonology consult requested.",
+        "explanation": "Patient was admitted for inpatient care with a pulmonology consult; there is no outpatient 48-hour follow-up plan, and framing the disposition as an outpatient follow-up directly contradicts the documented admission."
+      },
+      {
+        "claim_text": "Critical hypoxia on arrival: SpO2 88% on room air — below safe threshold for pediatric patient, indicating acute respiratory compromise",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "CRITICAL",
+        "source_evidence": "SpO2: 88% on room air on arrival.",
+        "explanation": "Review critical_omission"
+      },
+      {
+        "claim_text": "Acute moderate-to-severe asthma exacerbation with INCOMPLETE response to initial bronchodilator therapy — ongoing respiratory compromise post-treatment",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "CRITICAL",
+        "source_evidence": "Acute moderate-to-severe asthma exacerbation with incomplete response to initial bronchodilator therapy. SpO2 below 95% despite oxygen supplementation is consistent with ongoing respiratory compromise.",
+        "explanation": "Review critical_omission"
+      },
+      {
+        "claim_text": "Persistent hypoxia post-treatment: SpO2 93% on supplemental oxygen — below target of ≥95%, indicating ongoing respiratory compromise requiring inpatient monitoring",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "CRITICAL",
+        "source_evidence": "SpO2: 93% post-treatment (on supplemental oxygen). Patient remains tachypneic (RR 28 breaths/min).",
+        "explanation": "Review critical_omission"
+      },
+      {
+        "claim_text": "Documented severe drug allergy: Amoxicillin — anaphylaxis (confirmed by allergist, required epinephrine). Class-level warning: all penicillin-class antibiotics contraindicated.",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "CRITICAL",
+        "source_evidence": "Documented drug allergy: Amoxicillin — anaphylaxis at age 6 (confirmed by allergist). Documented in medical record. Epinephrine required at time of reaction. DO NOT administer amoxicillin or any penicillin-class antibiotic — documented anaphylaxis.",
+        "explanation": "Review critical_omission"
+      },
+      {
+        "claim_text": "Incorrect disposition documented in summary: source note explicitly states patient was ADMITTED to pediatric inpatient ward. Summary incorrectly states patient was DISCHARGED home.",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "CRITICAL",
+        "source_evidence": "Disposition: ADMITTED to pediatric ward.",
+        "explanation": "Review critical_omission"
+      },
+      {
+        "claim_text": "Pediatric pulmonology consult requested — specialist involvement for ongoing respiratory compromise in pediatric patient",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "HIGH",
+        "source_evidence": "Pediatric pulmonology consult requested.",
+        "explanation": "Review critical_omission"
+      },
+      {
+        "claim_text": "Acute respiratory distress with critical vital signs on arrival: RR 36 breaths/min (severe tachypnea), HR 124 bpm — indicating severity of exacerbation not conveyed in summary",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "HIGH",
+        "source_evidence": "Respiratory rate: 36 breaths/min. Heart rate: 124 bpm. On arrival: moderate-to-severe respiratory distress. Accessory muscle use noted.",
+        "explanation": "Review critical_omission"
+      }
+    ],
+    "flawed_summary": "8-year-old male with known asthma presented to the Emergency Department with an acute exacerbation. History of asthma since age 5, managed with salbutamol as needed. Documented allergy to amoxicillin. Patient was treated with three doses of nebulized salbutamol and IV methylprednisolone. Good clinical response observed with improvement in respiratory status. Patient was discharged home in stable condition. Parents instructed to continue salbutamol as needed and follow up with pediatrician within 48 hours.",
+    "corrected_summary": "8-year-old male with known asthma (diagnosed age 5), managed with salbutamol as needed, presented to the Emergency Department with an acute moderate-to-severe asthma exacerbation. On arrival, patient was in moderate-to-severe respiratory distress with accessory muscle use, bilateral expiratory wheezing, severe tachypnea (RR 36 breaths/min), tachycardia (HR 124 bpm), and critical hypoxia (SpO2 88% on room air), indicating acute respiratory compromise. DOCUMENTED SEVERE DRUG ALLERGY: Amoxicillin — anaphylaxis at age 6, confirmed by allergist, required epinephrine. All penicillin-class antibiotics are contraindicated. DO NOT administer amoxicillin or any penicillin-class antibiotic. Patient was treated with three consecutive doses of nebulized salbutamol 2.5mg over 60 minutes and IV methylprednisolone 28mg (1mg/kg), with supplemental oxygen via nasal cannula at 2L/min. Only a partial and incomplete response to treatment was observed: accessory muscle use decreased but remains present, persistent mild-to-moderate wheezing on auscultation, patient remains tachypneic (RR 28 breaths/min), and SpO2 is 93% on supplemental oxygen — below the target of ≥95% ��� consistent with ongoing respiratory compromise. Clinical assessment: acute moderate-to-severe asthma exacerbation with INCOMPLETE response to initial bronchodilator therapy and ongoing respiratory compromise post-treatment. Disposition: ADMITTED to pediatric inpatient ward for continued monitoring and treatment. Inpatient plan includes: nebulized salbutamol every 4 hours with reassessment, continuation of systemic corticosteroids (oral prednisolone to follow IV course), continuous SpO2 monitoring with target ≥95%, and pediatric pulmonology consult requested. Parents counseled on admission necessity and monitoring plan.",
+    "revalidation": {
+      "verdict": "PASS",
+      "overall_severity": "CRITICAL"
+    }
+  }
+}
