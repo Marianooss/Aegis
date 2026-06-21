@@ -48,3 +48,6 @@ captured-terminal-output.txt
 # IDE assistant metadata
 .claude/
 .devin/
+
+# package manager lock files
+pnpm-lock.yaml
