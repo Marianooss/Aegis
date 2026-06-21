@@ -51,3 +51,7 @@ captured-terminal-output.txt
 
 # package manager lock files
 pnpm-lock.yaml
+
+.claude/
+.devin/
+pnpm-lock.yaml
