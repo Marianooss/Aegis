@@ -73,6 +73,17 @@
 
 **Show:** Orchestrator → Shared folder → Deployments overview — 3 green Active badges
 
+**Script continues:**
+> "The full pipeline is orchestrated by UiPath Maestro.
+> Here's the BPMN — MedicalRecordsSummarizer feeds into SENTINEL Validator,
+> then a gateway routes to Action Center for human review, or auto-approves.
+> The process is built and validated with zero issues.
+> Publish is blocked by a known UiPath staging bug — documented in the community forum —
+> but the individual agents are fully deployed and running."
+
+**Show:** UiPath Studio Web — Solution 8 → Maestro BPMN → Process.bpmn
+Show the flow: Start → MedicalRecordsSummarizer → SENTINEL Validator → Escalate? gateway → YES: Clinical Review Action Center / NO: PASS
+
 **Duration:** 30 seconds
 
 ---
