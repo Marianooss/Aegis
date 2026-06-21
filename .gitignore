@@ -44,3 +44,7 @@ tsconfig.json
 
 # captured terminal output
 captured-terminal-output.txt
+
+# IDE assistant metadata
+.claude/
+.devin/
