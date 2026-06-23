@@ -55,3 +55,15 @@ pnpm-lock.yaml
 .claude/
 .devin/
 pnpm-lock.yaml
+audio/
+video/
+output/
+aegis_video.js
+scene_04_automation.ps1
+scene_06_automation.ps1
+scene_07_automation.ps1
+scene_08_combine.js
+scene_08_combine.ps1
+temp_generate_08.js
+SENTINEL-PROMPTS.md
+test-scenarios/TC-008*
