@@ -159,25 +159,16 @@ async function runPipeline(clinical_note, ai_summary, escalation_threshold = 'ME
     revalidation = parseJSON(revalRaw);
   }
 
-  // Map to schema v1.0.2
-  const hallCount = layer2?.trace_results?.filter(r => r.sentinel_flag).length || 0;
-  const conCount = layer3?.contradiction_results?.filter(r => r.sentinel_flag).length || 0;
-  const omCount = layer4?.critical_scan?.critical_items_found?.filter(i => i.sentinel_flag).length || 0;
-
   return {
     verdict: verdict.verdict,
     overall_severity: verdict.overall_severity,
     escalate_to_human: verdict.escalate_to_human,
-    breakdown: {
-      hallucinations: hallCount,
-      contradictions: conCount,
-      critical_omissions: omCount
-    },
+    breakdown: verdict.breakdown,
     validation_layers: [
-      { layer_name: 'factual_accuracy', status: 'PASS', findings: `Layer 1 extracted ${layer1.total_claims} claims`, issue_count: 0 },
-      { layer_name: 'hallucination_detection', status: hallCount > 0 ? 'FAIL' : 'PASS', findings: `${hallCount} unsupported claims`, issue_count: hallCount },
-      { layer_name: 'contradiction_detection', status: conCount > 0 ? 'FAIL' : 'PASS', findings: `${conCount} contradictions`, issue_count: conCount },
-      { layer_name: 'critical_omission', status: omCount > 0 ? 'FAIL' : 'PASS', findings: `${omCount} critical omissions`, issue_count: omCount }
+      { layer_name: 'factual_accuracy', status: 'PASS', findings: `Layer 1 extracted ${layer1?.claims?.length || layer1?.total_claims || 0} claims`, issue_count: 0 },
+      { layer_name: 'hallucination_detection', status: verdict.breakdown.hallucinations > 0 ? 'FAIL' : 'PASS', findings: `${verdict.breakdown.hallucinations} unsupported claims`, issue_count: verdict.breakdown.hallucinations },
+      { layer_name: 'contradiction_detection', status: verdict.breakdown.contradictions > 0 ? 'FAIL' : 'PASS', findings: `${verdict.breakdown.contradictions} contradictions`, issue_count: verdict.breakdown.contradictions },
+      { layer_name: 'critical_omission', status: verdict.breakdown.critical_omissions > 0 ? 'FAIL' : 'PASS', findings: `${verdict.breakdown.critical_omissions} critical omissions`, issue_count: verdict.breakdown.critical_omissions }
     ],
     flagged_claims: verdict.flagged_claims.map(f => ({
       claim: f.claim_text,
