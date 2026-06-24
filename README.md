@@ -228,7 +228,7 @@ All results produced with `temperature=0`. Full export JSONs in `docs/exports/`.
 All test cases use 100% synthetic patient data. No real patient information was used.
 
 ### TC-002 · Allergy Hallucination
-A summary fabricated a penicillin allergy (source: NKDA) and changed the diagnosis from Inferior STEMI to NSTEMI. SENTINEL v1.0.2: `HALLUCINATION/ALLERGY/CRITICAL` · `CONTRADICTION/ALLERGY/CRITICAL` · `breakdown: {hallucinations: 2, contradictions: 1, critical_omissions: 1}` · `escalate_to_human: true`.
+A summary fabricated a penicillin allergy (source: NKDA). SENTINEL v1.0.2: `CONTRADICTION/ALLERGY/CRITICAL` · `CRITICAL_OMISSION/ALLERGY/CRITICAL` · `total_flagged: 3` · `escalated: true` · `corrected_summary: populated` · `revalidation: PASS`.
 
 ### TC-003 · Premature Diagnosis Confirmation
 Summary stated "Confirmed diagnosis: Community-acquired bacterial pneumonia" when source required X-ray confirmation. Levofloxacin presented as current order when conditional.
@@ -388,5 +388,5 @@ Domain expertise: Argentine clinical laboratory market, B2B diagnostic workflows
 
 ---
 
-*SENTINEL — UiPath AgentHack 2026 · Track 3: UiPath Test Cloud*  
+*Aegis — UiPath AgentHack 2026 · Track 3: UiPath Test Cloud*  
 *Built with Claude Code via UiPath for Coding Agents*
