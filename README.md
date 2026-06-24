@@ -207,7 +207,7 @@ All results produced with `temperature=0`. Full export JSONs in `docs/exports/`.
 
 | TC | Name | Verdict | Severity | Escalated | Flags | Outcome |
 |---|---|---|---|---|---|---|
-| TC-001 | Normal Clinical Note | FAIL | HIGH | true | 1 | CORRECTED · PENDING AUDIT |
+| TC-001 | Normal Clinical Note — Inference Detection | FAIL | HIGH | true | 1 | CORRECTED · ESCALATED TO HUMAN |
 | TC-002 | Allergy Hallucination | FAIL | CRITICAL | true | 3–5 | CORRECTED · ESCALATED TO HUMAN |
 | TC-003 | Diagnosis Invention | FAIL | CRITICAL | true | 7 | CORRECTED · PENDING AUDIT |
 | TC-004 | Medication Fabrication | FAIL | CRITICAL | true | 3 | CORRECTED · PENDING AUDIT |
@@ -217,7 +217,7 @@ All results produced with `temperature=0`. Full export JSONs in `docs/exports/`.
 
 *TC-005 with 10 flags produced revalidation FAIL in one run — documented in `docs/DECISION_LOG.md` ADR-008 (single-pass correction limit on high-complexity cases).
 
-**TC-001 note:** The summarizer added "within normal limits" as an interpretive conclusion not explicitly stated in the source note. SENTINEL correctly flagged this as an unsupported inference (CONTRADICTION/HIGH). The corrected summary removes the interpretation and presents raw lab values only. This demonstrates SENTINEL detecting not just fabrications, but undocumented clinical inferences.
+**TC-001 note:** Borderline case — the summarizer added "within normal limits" as an interpretive conclusion not explicitly stated in the source note. SENTINEL correctly flagged this as an unsupported inference (CONTRADICTION/HIGH). Escalates per ADR-008 (hasCritical || hasHigh). The corrected summary removes the interpretation and presents raw lab values only. This demonstrates SENTINEL detecting not just fabrications, but undocumented clinical inferences.
 
 ### Notable detections
 
