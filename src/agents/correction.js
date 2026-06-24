@@ -1,7 +1,6 @@
 require('dotenv').config();
 const https = require('https');
 
-const API_URL = 'https://api.anthropic.com/v1/messages';
 const KEY = process.env.ANTHROPIC_API_KEY;
 
 const CORRECTION_SYSTEM = `You are a medical summary correction specialist. You receive:
@@ -24,10 +23,13 @@ function callClaude(system, userMsg, maxTokens = 1024) {
     const body = JSON.stringify({
       model: 'claude-sonnet-4-6',
       max_tokens: maxTokens,
-      system,
+      temperature: 0,
+      system: system,
       messages: [{ role: 'user', content: userMsg }]
     });
-    const req = https.request('https://api.anthropic.com/v1/messages', {
+    const req = https.request({
+      hostname: 'api.anthropic.com',
+      path: '/v1/messages',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -36,19 +38,17 @@ function callClaude(system, userMsg, maxTokens = 1024) {
         'Content-Length': Buffer.byteLength(body)
       }
     }, (res) => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
+      const chunks = [];
+      res.on('data', c => chunks.push(c));
       res.on('end', () => {
         try {
-          const parsed = JSON.parse(data);
-          if (res.statusCode < 200 || res.statusCode >= 300) {
-            reject(new Error(`API error ${res.statusCode}: ${data.substring(0, 200)}`));
+          const json = JSON.parse(Buffer.concat(chunks).toString());
+          if (json.content?.[0]?.text) {
+            resolve(json.content[0].text);
           } else {
-            resolve(parsed.content[0].text);
+            reject(new Error('Claude bad response: ' + JSON.stringify(json)));
           }
-        } catch (e) {
-          reject(new Error(`Parse error: ${data.substring(0, 200)}`));
-        }
+        } catch(e) { reject(e); }
       });
     });
     req.on('error', reject);
@@ -58,9 +58,21 @@ function callClaude(system, userMsg, maxTokens = 1024) {
 }
 
 function parseJSON(raw) {
+  if (!raw) return null;
   try {
+    // Try direct parse first
     return JSON.parse(raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim());
   } catch {
+    // Fallback: extract first {...} block
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (match) {
+      try { return JSON.parse(match[0]); } catch { }
+    }
+    // Last resort: if raw text looks like a summary, wrap it
+    const trimmed = raw.trim();
+    if (trimmed.length > 20 && !trimmed.startsWith('{')) {
+      return { summary_text: trimmed };
+    }
     return null;
   }
 }
@@ -72,7 +84,11 @@ async function correctionAgent(clinicalNote, flawedSummary, sentinelFlags) {
 
   const userMsg = `ORIGINAL CLINICAL NOTE (ground truth):\n${clinicalNote}\n\nFLAWED SUMMARY TO CORRECT:\n${flawedSummary}\n\nSENTINEL FLAGS TO FIX:\n${flagList}\n\nGenerate the corrected summary as JSON. Fix every flagged claim. Preserve all accurate content.`;
 
-  const raw = await callClaude(CORRECTION_SYSTEM, userMsg, 1024);
+  const call = callClaude;
+  const raw = await call(CORRECTION_SYSTEM, userMsg, 1024);
+  console.log('=== CORRECTION RAW RESPONSE ===');
+  console.log(raw);
+  console.log('=== END RAW ===');
   return parseJSON(raw);
 }
 

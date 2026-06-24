@@ -18,10 +18,11 @@ function callClaude(system, userMsg, maxTokens = 2048) {
     const body = JSON.stringify({
       model: 'claude-sonnet-4-6',
       max_tokens: maxTokens,
-      system,
+      temperature: 0,
+      system: system,
       messages: [{ role: 'user', content: userMsg }]
     });
-    const options = {
+    const req = https.request({
       hostname: 'api.anthropic.com',
       path: '/v1/messages',
       method: 'POST',
@@ -31,13 +32,18 @@ function callClaude(system, userMsg, maxTokens = 2048) {
         'anthropic-version': '2023-06-01',
         'Content-Length': Buffer.byteLength(body)
       }
-    };
-    const req = https.request(options, (res) => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
+    }, (res) => {
+      const chunks = [];
+      res.on('data', c => chunks.push(c));
       res.on('end', () => {
-        try { resolve(JSON.parse(data).content[0].text); }
-        catch (e) { reject(new Error('Parse error: ' + data.substring(0, 200))); }
+        try {
+          const json = JSON.parse(Buffer.concat(chunks).toString());
+          if (json.content?.[0]?.text) {
+            resolve(json.content[0].text);
+          } else {
+            reject(new Error('Claude bad response: ' + JSON.stringify(json)));
+          }
+        } catch(e) { reject(e); }
       });
     });
     req.on('error', reject);
@@ -150,8 +156,14 @@ header{position:relative;z-index:10;display:flex;align-items:center;justify-cont
 .log-sev{padding:1px 7px;border-radius:20px;font-size:8px;}
 .spinner{display:inline-block;width:9px;height:9px;border:1px solid var(--dim2);border-top-color:var(--teal);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:4px;}
 @keyframes spin{to{transform:rotate(360deg)}}
+.exp-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .exp-btn{width:100%;padding:10px;background:transparent;color:var(--teal);border:1px solid rgba(0,229,204,.35);border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:3px;cursor:pointer;transition:all .2s;}
 .exp-btn:hover{background:rgba(0,229,204,.07);border-color:var(--teal);}
+.exp-btn.pdf{color:var(--amber);border-color:rgba(255,176,32,.35);}
+.exp-btn.pdf:hover{background:rgba(255,176,32,.07);border-color:var(--amber);}
+.src-box{padding:14px;border:1px solid rgba(0,229,204,.12);border-radius:4px;background:var(--bg2);}
+.src-desc{font-size:10px;color:var(--teal);line-height:1.6;margin-bottom:12px;font-style:italic;}
+.src-note{font-size:9px;color:#9AACCC;line-height:1.75;white-space:pre-wrap;max-height:180px;overflow-y:auto;}
 ::-webkit-scrollbar{width:3px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--dim2);border-radius:2px;}
@@ -161,7 +173,7 @@ header{position:relative;z-index:10;display:flex;align-items:center;justify-cont
 </style>
 </head>
 <body>
-<div id="splash"><img src="/Aegis-logo.png" alt="Aegis"></div>
+<div id="splash"><img src="/Aegis.png" alt="Aegis"></div>
 <header>
   <div class="logo">
     <div class="logo-mark"><img src="/aegis-shield.png" style="width:48px;height:48px;object-fit:cover;border-radius:4px;" alt="Aegis"></div>
@@ -192,6 +204,15 @@ header{position:relative;z-index:10;display:flex;align-items:center;justify-cont
   </div>
 
   <div class="cp">
+    <div id="src-sec">
+      <div class="plabel">CASE DESCRIPTION</div>
+      <div class="src-box">
+        <div class="src-desc" id="src-desc">Select a scenario to view its description.</div>
+        <div class="stitle">SOURCE NOTE</div>
+        <div class="src-note" id="src-note">—</div>
+      </div>
+    </div>
+
     <div>
       <div class="plabel">PIPELINE EXECUTION</div>
       <div class="pipeline">
@@ -221,7 +242,10 @@ header{position:relative;z-index:10;display:flex;align-items:center;justify-cont
     </div>
 
     <div class="rsec" id="exsec">
-      <button class="exp-btn" onclick="exportResult()">↓ EXPORT FULL RESULT</button>
+      <div class="exp-btns">
+        <button class="exp-btn" onclick="exportJSON()">↓ EXPORT JSON</button>
+        <button class="exp-btn pdf" onclick="exportPDF()">↓ EXPORT PDF</button>
+      </div>
     </div>
   </div>
 
@@ -266,6 +290,7 @@ const SCENARIOS=[
   {id:'TC-006',name:'Contradictory Source Note',cls:'th',tag:'HIGH'},
   {id:'TC-007',name:'Pediatric Asthma — Discharge Hallucination',cls:'tc',tag:'CRITICAL'},
 ];
+let SCENARIO_DATA={};
 let sel='TC-002',running=false;
 let S={tot:0,app:0,fix:0,esc:0};
 let lastResult=null;
@@ -280,7 +305,14 @@ function renderList(){
   \`).join('');
 }
 
-function pick(id){sel=id;renderList();reset();}
+function showSourceNote(id){
+  const d=SCENARIO_DATA[id];
+  if(!d)return;
+  document.getElementById('src-desc').textContent=d.description||'—';
+  document.getElementById('src-note').textContent=d.note||'—';
+}
+
+function pick(id){sel=id;renderList();reset();showSourceNote(id);}
 
 function reset(){
   [1,2,3,4].forEach(i=>{
@@ -296,23 +328,29 @@ function reset(){
   lastResult=null;
 }
 
-function exportResult(){
-  if(!lastResult)return;
-  const payload={
-    aegis_export:{
-      scenario_id:lastResult.scenario_id,
-      scenario_name:lastResult.scenario_name,
-      exported_at:lastResult.exported_at,
-      verdict:lastResult.pipeline_result.sentinel?.verdict||'—',
-      overall_severity:lastResult.pipeline_result.sentinel?.overall_severity||'—',
-      escalated:lastResult.pipeline_result.sentinel?.escalate_to_human||false,
-      total_flagged:lastResult.pipeline_result.sentinel?.total_flagged||0,
-      flagged_claims:lastResult.pipeline_result.sentinel?.flagged_claims||[],
-      flawed_summary:lastResult.pipeline_result.flawedSummary||null,
-      corrected_summary:lastResult.pipeline_result.correction||null,
-      revalidation:lastResult.pipeline_result.revalidation||null
-    }
-  };
+function buildPayload(){
+  if(!lastResult)return null;
+  const sc=SCENARIO_DATA[lastResult.scenario_id]||{};
+  return{aegis_export:{
+    scenario_id:lastResult.scenario_id,
+    scenario_name:lastResult.scenario_name,
+    exported_at:lastResult.exported_at,
+    case_description:sc.description||null,
+    clinical_note:sc.note||null,
+    verdict:lastResult.pipeline_result.sentinel?.verdict||'—',
+    overall_severity:lastResult.pipeline_result.sentinel?.overall_severity||'—',
+    escalated:lastResult.pipeline_result.sentinel?.escalate_to_human||false,
+    total_flagged:lastResult.pipeline_result.sentinel?.total_flagged||0,
+    flagged_claims:lastResult.pipeline_result.sentinel?.flagged_claims||[],
+    flawed_summary:lastResult.pipeline_result.flawedSummary||null,
+    corrected_summary:lastResult.pipeline_result.correction||null,
+    revalidation:lastResult.pipeline_result.revalidation||null
+  }};
+}
+
+function exportJSON(){
+  const payload=buildPayload();
+  if(!payload)return;
   const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
@@ -320,6 +358,67 @@ function exportResult(){
   a.download=lastResult.scenario_id+'-result-'+new Date().toISOString().slice(0,19).replace(/:/g,'-')+'.json';
   a.click();
   URL.revokeObjectURL(url);
+}
+
+function exportPDF(){
+  const payload=buildPayload();
+  if(!payload)return;
+  const p=payload.aegis_export;
+  const sevColor=p.overall_severity==='CRITICAL'?'#FF3B47':p.overall_severity==='HIGH'?'#FFB020':'#00E5CC';
+  const verdictColor=p.verdict==='PASS'?'#00E5CC':'#FF3B47';
+  const esc=s=>s?s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):'';
+  const flagsHtml=(p.flagged_claims||[]).map(f=>{
+    const c=f.severity==='CRITICAL'?'#FF3B47':f.severity==='HIGH'?'#FFB020':'#4D9EFF';
+    return '<div style="border:1px solid '+c+';border-left:3px solid '+c+';border-radius:4px;padding:12px;margin-bottom:10px;">'
+      +'<div style="font-size:10px;color:'+c+';letter-spacing:2px;margin-bottom:5px">['+esc(f.failure_type||f.issue_type)+'] &middot; '+esc(f.severity)+'</div>'
+      +'<div style="font-size:12px;font-style:italic;margin-bottom:5px">&ldquo;'+esc(f.claim_text||f.claim)+'&rdquo;</div>'
+      +'<div style="font-size:10px;color:#9AACCC">Source: '+esc(f.source_evidence||f.evidence)+'</div>'
+      +'</div>';
+  }).join('');
+  const corrHtml=p.corrected_summary
+    ?'<h3 style="color:#00E5CC;font-size:11px;letter-spacing:3px;margin:20px 0 10px">CORRECTION APPLIED</h3>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'
+      +'<div style="background:rgba(255,59,71,.06);border:1px solid rgba(255,59,71,.25);border-radius:4px;padding:12px">'
+      +'<div style="font-size:9px;color:#FF3B47;letter-spacing:2px;margin-bottom:8px">BEFORE (FLAWED)</div>'
+      +'<div style="font-size:10px;color:#FF9999;line-height:1.6">'+esc(p.flawed_summary||'')+'</div></div>'
+      +'<div style="background:rgba(0,229,204,.06);border:1px solid rgba(0,229,204,.25);border-radius:4px;padding:12px">'
+      +'<div style="font-size:9px;color:#00E5CC;letter-spacing:2px;margin-bottom:8px">AFTER (CORRECTED)</div>'
+      +'<div style="font-size:10px;color:#99FFE5;line-height:1.6">'+esc(p.corrected_summary)+'</div></div></div>'
+    :'';
+  const html='<!DOCTYPE html><html><head><meta charset="UTF-8">'
+    +'<title>AEGIS · '+esc(p.scenario_id)+' · '+esc(p.scenario_name)+'</title>'
+    +'<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">'
+    +'<style>*{margin:0;padding:0;box-sizing:border-box;}'
+    +'body{background:#060A14;color:#F0F4FF;font-family:"JetBrains Mono",monospace;padding:32px;font-size:12px;}'
+    +'@media print{body{background:#fff!important;color:#111!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}.noprint{display:none!important}}'
+    +'</style></head><body>'
+    +'<div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;border-bottom:1px solid rgba(0,229,204,.2);padding-bottom:16px">'
+    +'<div style="font-family:Georgia,serif;font-size:22px;font-weight:700;letter-spacing:4px;color:#00E5CC">AEGIS</div>'
+    +'<div style="font-size:9px;color:#4A5568;letter-spacing:2px">CI/CD FOR REGULATED AI · VALIDATION REPORT</div>'
+    +'<div style="margin-left:auto;font-size:9px;color:#4A5568">'+esc(p.exported_at)+'</div></div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">'
+    +'<div style="border:1px solid rgba(0,229,204,.15);border-radius:4px;padding:12px;background:rgba(12,18,32,.8)">'
+    +'<div style="font-size:9px;letter-spacing:2px;color:#4A5568;margin-bottom:4px">SCENARIO</div>'
+    +'<div style="font-size:13px;font-weight:700">'+esc(p.scenario_id)+' · '+esc(p.scenario_name)+'</div></div>'
+    +'<div style="border:1px solid rgba(0,229,204,.15);border-radius:4px;padding:12px;background:rgba(12,18,32,.8)">'
+    +'<div style="font-size:9px;letter-spacing:2px;color:#4A5568;margin-bottom:4px">VERDICT</div>'
+    +'<div style="font-size:18px;font-weight:700;color:'+verdictColor+'">'+esc(p.verdict)+'<span style="font-size:12px;color:'+sevColor+';margin-left:10px">'+esc(p.overall_severity)+'</span></div></div></div>'
+    +(p.case_description
+      ?'<div style="border:1px solid rgba(0,229,204,.12);border-radius:4px;padding:14px;margin-bottom:20px;background:rgba(12,18,32,.8)">'
+        +'<div style="font-size:9px;letter-spacing:2px;color:#4A5568;margin-bottom:8px">CASE DESCRIPTION</div>'
+        +'<div style="font-size:10px;color:#00E5CC;line-height:1.6;font-style:italic">'+esc(p.case_description)+'</div></div>'
+      :'')
+    +'<div style="border:1px solid rgba(0,229,204,.12);border-radius:4px;padding:14px;margin-bottom:20px;background:rgba(12,18,32,.8)">'
+    +'<div style="font-size:9px;letter-spacing:2px;color:#4A5568;margin-bottom:8px">SOURCE NOTE</div>'
+    +'<div style="font-size:9px;color:#9AACCC;line-height:1.75;white-space:pre-wrap">'+esc(p.clinical_note||'—')+'</div></div>'
+    +(flagsHtml?'<h3 style="color:#FF3B47;font-size:11px;letter-spacing:3px;margin-bottom:10px">FLAGGED CLAIMS ('+p.total_flagged+')</h3>'+flagsHtml:'')
+    +corrHtml
+    +'<div class="noprint" style="margin-top:28px;text-align:center">'
+    +'<button onclick="window.print()" style="padding:10px 30px;background:#00E5CC;color:#000;border:none;border-radius:4px;font-family:monospace;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:2px">PRINT / SAVE AS PDF</button></div>'
+    +'</body></html>';
+  const w=window.open('','_blank');
+  w.document.write(html);
+  w.document.close();
 }
 
 function step(n,state,txt){
@@ -392,13 +491,13 @@ async function run(){
           document.getElementById('dsec').style.display='block';
         }
         const b=document.getElementById('vbanner');
-        if(rv.verdict==='PASS'){
+        if(rv.verdict==='PASS' && !sv.escalate_to_human){
           b.className='vbanner vb-ok';
           b.textContent='🔧 AUTO-CORRECTED — '+sv.total_flagged+' errors fixed, re-validation PASS';
           S.fix++;addLog(sel,'AUTO_CORRECTED',sv.overall_severity);
         } else {
           b.className='vbanner vb-esc';
-          b.textContent='🔴 ESCALATED TO HUMAN REVIEW — Patient safety requires physician verification';
+          b.textContent='⚠ CORRECTED · ESCALATED TO HUMAN — Proposed correction requires medical approval';
           S.esc++;addLog(sel,'ESCALATED',sv.overall_severity);
         }
         b.style.display='block';
@@ -419,6 +518,10 @@ async function run(){
 }
 
 renderList();
+fetch('/api/scenarios').then(r=>r.json()).then(data=>{
+  SCENARIO_DATA=data;
+  showSourceNote(sel);
+}).catch(()=>{});
 setTimeout(()=>{document.getElementById('splash').classList.add('fade');},2800);
 setTimeout(()=>{document.getElementById('splash').style.display='none';},3600);
 </script>
@@ -438,9 +541,9 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  if (req.method === 'GET' && req.url === '/Aegis-logo.png') {
+  if (req.method === 'GET' && req.url === '/Aegis.png') {
     try {
-      const imgPath = path.join(__dirname, 'Aegis-logo.png');
+      const imgPath = path.join(__dirname, 'Aegis.png');
       const img = fs.readFileSync(imgPath);
       res.writeHead(200, { 'Content-Type': 'image/png' });
       res.end(img);
@@ -453,6 +556,29 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'GET' && req.url === '/') {
     res.writeHead(200, { 'Content-Type': 'text/html' });
     res.end(HTML);
+    return;
+  }
+
+  if (req.method === 'GET' && req.url === '/api/scenarios') {
+    try {
+      const scenariosDir = path.join(__dirname, '../../test-scenarios');
+      const files = fs.readdirSync(scenariosDir).filter(f => f.endsWith('.json')).sort();
+      const result = {};
+      for (const file of files) {
+        try {
+          const sc = JSON.parse(fs.readFileSync(path.join(scenariosDir, file), 'utf8'));
+          const id = sc.test_case_id;
+          if (id) result[id] = {
+            description: sc.description || '',
+            note: sc.clinical_note?.content || sc.clinical_note || ''
+          };
+        } catch {}
+      }
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(result));
+    } catch (e) {
+      res.writeHead(500); res.end(JSON.stringify({ error: e.message }));
+    }
     return;
   }
 

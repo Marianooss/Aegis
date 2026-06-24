@@ -1,7 +1,7 @@
 # Aegis — Decision Log
 > Active design decisions with rationale and evidence.
 > Format: ADR (Architecture Decision Record)
-> Updated: 2026-06-21
+> Updated: 2026-06-24
 
 ---
 
@@ -137,6 +137,31 @@ Option C is the most clinically conservative and architecturally simplest.
 
 - TC-005 Run A (01:53Z): 9 flags → corrected → revalidation PASS
 - TC-005 Run B (02:02Z): 10 flags → corrected → revalidation FAIL
+
+---
+
+## ADR-009 — TC-002 "Correct + Escalate" as canonical escalation behavior
+
+**Date:** 2026-06-24
+**Status:** IMPLEMENTED
+
+### Decision
+
+The Correction Agent runs **independently** of the escalation decision. A case can be simultaneously:
+- **corrected** (proposed fix generated), AND
+- **escalated** (`escalate_to_human: true` due to CRITICAL/HIGH severity).
+
+TC-002 (Allergy Hallucination) is the canonical example:
+- Source note states NKDA.
+- Summary hallucinates penicillin allergy + amoxicillin restriction.
+- SENTINEL detects contradiction (CRITICAL) + omission (CRITICAL).
+- Correction Agent proposes accurate summary with NKDA.
+- Aggregator sets `escalate_to_human = true` (hasCritical || hasHigh).
+- Revalidation verdict = PASS, but escalation remains true.
+
+**Clinical rationale:** Even when the correction is objectively correct, any CRITICAL severity finding requires human confirmation before the corrected summary replaces the flawed one. The correction is a *proposal*, not an override.
+
+**Rule:** `escalate_to_human` is NEVER downgraded by correction success. It is set by the original SENTINEL verdict and persists.
 
 ---
 

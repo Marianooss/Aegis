@@ -14,7 +14,6 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 
-const API_URL = 'https://api.anthropic.com/v1/messages';
 const KEY = process.env.ANTHROPIC_API_KEY;
 
 // ─── Claude caller (same pattern as pipeline.js) ────────────────────────────
@@ -24,10 +23,13 @@ function callClaude(system, userMsg, maxTokens = 4096) {
     const body = JSON.stringify({
       model: 'claude-sonnet-4-6',
       max_tokens: maxTokens,
-      system,
+      temperature: 0,
+      system: system,
       messages: [{ role: 'user', content: userMsg }]
     });
-    const req = https.request(API_URL, {
+    const req = https.request({
+      hostname: 'api.anthropic.com',
+      path: '/v1/messages',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -36,19 +38,17 @@ function callClaude(system, userMsg, maxTokens = 4096) {
         'Content-Length': Buffer.byteLength(body)
       }
     }, (res) => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
+      const chunks = [];
+      res.on('data', c => chunks.push(c));
       res.on('end', () => {
         try {
-          const parsed = JSON.parse(data);
-          if (res.statusCode < 200 || res.statusCode >= 300) {
-            reject(new Error(`API error ${res.statusCode}: ${data.substring(0, 300)}`));
+          const json = JSON.parse(Buffer.concat(chunks).toString());
+          if (json.content?.[0]?.text) {
+            resolve(json.content[0].text);
           } else {
-            resolve(parsed.content[0].text);
+            reject(new Error('Claude bad response: ' + JSON.stringify(json)));
           }
-        } catch (e) {
-          reject(new Error(`Parse error: ${data.substring(0, 200)}`));
-        }
+        } catch(e) { reject(e); }
       });
     });
     req.on('error', reject);

@@ -5,7 +5,6 @@ const https = require('https');
 const { aggregateSentinelVerdict } = require('../../agents/sentinel/aggregator.js');
 const { correctionAgent } = require('../agents/correction.js');
 
-const API_URL = 'https://api.anthropic.com/v1/messages';
 const KEY = process.env.ANTHROPIC_API_KEY;
 
 function loadPrompt(filename) {
@@ -28,10 +27,12 @@ function callClaude(system, userMsg, maxTokens = 2048) {
       model: 'claude-sonnet-4-6',
       max_tokens: maxTokens,
       temperature: 0,
-      system,
+      system: system,
       messages: [{ role: 'user', content: userMsg }]
     });
-    const req = https.request('https://api.anthropic.com/v1/messages', {
+    const req = https.request({
+      hostname: 'api.anthropic.com',
+      path: '/v1/messages',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -40,19 +41,17 @@ function callClaude(system, userMsg, maxTokens = 2048) {
         'Content-Length': Buffer.byteLength(body)
       }
     }, (res) => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
+      const chunks = [];
+      res.on('data', c => chunks.push(c));
       res.on('end', () => {
         try {
-          const parsed = JSON.parse(data);
-          if (res.statusCode < 200 || res.statusCode >= 300) {
-            reject(new Error(`API error ${res.statusCode}: ${data.substring(0, 200)}`));
+          const json = JSON.parse(Buffer.concat(chunks).toString());
+          if (json.content?.[0]?.text) {
+            resolve(json.content[0].text);
           } else {
-            resolve(parsed.content[0].text);
+            reject(new Error('Claude bad response: ' + JSON.stringify(json)));
           }
-        } catch (e) {
-          reject(new Error(`Parse error: ${data.substring(0, 200)}`));
-        }
+        } catch(e) { reject(e); }
       });
     });
     req.on('error', reject);
@@ -86,21 +85,23 @@ function buildLayer4Input(clinicalNote, summary) {
 async function runPipeline(clinical_note, ai_summary, escalation_threshold = 'MEDIUM') {
   if (!KEY) throw new Error('ANTHROPIC_API_KEY not set in .env');
 
+  const call = callClaude;
+
   // Layer 1: Extract claims
-  const l1Raw = await callClaude(L1_PROMPT, buildLayer1Input(ai_summary), 2048);
+  const l1Raw = await call(L1_PROMPT, buildLayer1Input(ai_summary), 2048);
   const layer1 = parseJSON(l1Raw);
   if (!layer1 || !layer1.claims) throw new Error('Layer 1 failed to parse');
 
   // Layer 2 + Layer 3 in parallel
   const [l2Raw, l3Raw] = await Promise.all([
-    callClaude(L2_PROMPT, buildLayer2Input(clinical_note, layer1), 2048),
-    callClaude(L3_PROMPT, buildLayer3Input(clinical_note, layer1), 2048)
+    call(L2_PROMPT, buildLayer2Input(clinical_note, layer1), 2048),
+    call(L3_PROMPT, buildLayer3Input(clinical_note, layer1), 2048)
   ]);
   const layer2 = parseJSON(l2Raw);
   const layer3 = parseJSON(l3Raw);
 
   // Layer 4: Critical completeness
-  const l4Raw = await callClaude(L4_PROMPT, buildLayer4Input(clinical_note, ai_summary), 2048);
+  const l4Raw = await call(L4_PROMPT, buildLayer4Input(clinical_note, ai_summary), 2048);
   const layer4 = parseJSON(l4Raw);
 
   // Aggregate
@@ -120,10 +121,35 @@ async function runPipeline(clinical_note, ai_summary, escalation_threshold = 'ME
     }));
 
     const correctionResult = await correctionAgent(clinical_note, ai_summary, flags);
-    corrected_summary = correctionResult?.summary_text || correctionResult?.summary || '';
+    corrected_summary = correctionResult?.summary_text
+    || correctionResult?.summary
+    || correctionResult?.corrected_summary
+    || (() => {
+        if (!correctionResult) return '';
+        const r = correctionResult;
+        // Groq returns structured JSON — flatten to clinical prose
+        const parts = [];
+        if (r.patientInfo) parts.push(`${r.patientInfo.gender || ''} patient, ${r.patientInfo.age || ''} years old.`);
+        if (r.diagnosis) parts.push(`Diagnosis: ${r.diagnosis}.`);
+        if (r.allergies) parts.push(`Allergies: ${r.allergies}.`);
+        if (r.vitalSigns?.temperature) parts.push(`Temperature: ${r.vitalSigns.temperature}°C.`);
+        if (r.symptoms?.length) parts.push(`Symptoms: ${r.symptoms.join(', ')}.`);
+        if (r.treatmentPlan) {
+          const tp = r.treatmentPlan;
+          const plan = [];
+          if (tp.rest) plan.push('relative rest');
+          if (tp.hydration) plan.push(tp.hydration + ' hydration');
+          if (tp.medication) plan.push(tp.medication);
+          if (tp.antibioticPrescription) plan.push(tp.antibioticPrescription);
+          if (plan.length) parts.push('Plan: ' + plan.join(', ') + '.');
+        }
+        if (r.followUp) parts.push(r.followUp);
+        return parts.join(' ').trim();
+      })()
+    || '';
 
     // Re-validate with monolithic SENTINEL (fast path)
-    const revalRaw = await callClaude(
+    const revalRaw = await call(
       SENTINEL_SYSTEM,
       `SOURCE NOTE (ground truth):\n${clinical_note}\n\nSUMMARY TO VALIDATE:\n${corrected_summary}\n\nReturn your JSON verdict.`,
       2048
