@@ -627,7 +627,10 @@ const server = http.createServer(async (req, res) => {
       };
 
       const revalOut = pipelineResult.revalidation_verdict
-        ? { verdict: pipelineResult.revalidation_verdict, overall_severity: pipelineResult.overall_severity }
+        ? {
+            verdict: pipelineResult.revalidation_verdict,
+            overall_severity: pipelineResult.revalidation_verdict === 'PASS' ? 'NONE' : pipelineResult.overall_severity
+          }
         : null;
 
       res.writeHead(200, { 'Content-Type': 'application/json' });

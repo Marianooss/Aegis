@@ -69,3 +69,15 @@ SENTINEL-PROMPTS.md
 test-scenarios/TC-008*
 
 archive/
+
+# Temp scripts
+temp_*.js
+temp_*.txt
+ping_gemini.js
+fix_srt.js
+scene_04_render.js
+scene_04_subtitle.js
+server_debug.log
+SESSION_STATE.md
+
+# Dashboard HTMLs (add to tracked instead)

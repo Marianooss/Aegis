@@ -348,7 +348,7 @@ and Action Center.
   "verdict": "FAIL",
   "overall_severity": "CRITICAL",
   "escalate_to_human": true,
-  "breakdown": { "hallucinations": 2, "contradictions": 1, "critical_omissions": 1 }
+  "breakdown": { "hallucinations": 0, "contradictions": 2, "critical_omissions": 1 }
 }
 ```
 
