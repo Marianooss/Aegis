@@ -83,6 +83,8 @@ function buildLayer4Input(clinicalNote, summary) {
 }
 
 async function runPipeline(clinical_note, ai_summary, escalation_threshold = 'MEDIUM') {
+  // escalation_threshold: reserved for future configurable thresholds.
+  // Current escalation logic is hardcoded in aggregator.js:113 (hasCritical || hasHigh) per ADR-008/ADR-009.
   if (!KEY) throw new Error('ANTHROPIC_API_KEY not set in .env');
 
   const call = callClaude;
