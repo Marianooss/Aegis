@@ -1,258 +1,178 @@
 # AEGIS — Demo Video Script
 > UiPath AgentHack 2026 · Track 3: Test Cloud
-> Target: 4:40 min · Hard limit: 5:00 · Language: English · Your voice, no TTS
+> Total audio: ~3:38 · Hard limit: 5:00 · Language: English · Narración: ElevenLabs Adam
 
 ---
 
 ## PRE-RECORDING CHECKLIST
 
-- [ ] Dashboard running: `node src/dashboard/server.js` → localhost:3000
-- [ ] Browser open at localhost:3000 (Chrome, full screen, zoom 110%)
-- [ ] UiPath Agent Builder open in second tab — Solution 6 + Solution 7 visible
-- [ ] UiPath Orchestrator open in third tab — Shared folder, Deployments overview (3 green Active badges)
-- [ ] VSCode terminal ready (PowerShell, clean, no sensitive data visible)
-- [ ] `.env` confirmed working — ANTHROPIC_API_KEY set
-- [ ] TC-007 visible in dashboard sidebar
-- [ ] Export button tested on TC-002
-- [ ] OBS / Loom recording at 1920x1080, 30fps
-- [ ] Microphone tested, no background noise
-- [ ] Phone on silent
+- [ ] `node src/dashboard/server.js` → localhost:3000 corriendo
+- [ ] 9 MP3s en `audio/` generados (`node aegis_video.js --generate-audio`)
+- [ ] Carpeta `video/` creada
+- [ ] Chrome abierto — fullscreen F11 listo
+- [ ] UiPath Agent Builder — Solutions 6 y 7 visibles
+- [ ] UiPath Orchestrator — Shared → Deployments (3 badges verdes)
+- [ ] UiPath Studio Web — Solution 8 → Maestro BPMN abierto
+- [ ] VSCode terminal limpia
+- [ ] Herramienta de recorte Windows 11 testeada (Win+Shift+R)
+- [ ] TC-007 visible en dashboard sidebar
+- [ ] Export button testeado en TC-002
 
 ---
 
-## SCENE 1 — THE PROBLEM (0:00–0:20)
+## ESCENA 00 — INTRO (0:00–0:05) · audio: 5s
 
-**Screen:** Dashboard — TC-002 selected, clinical note visible
-**Highlight:** The word "NKDA" in the note
+**Grabás:** `src/dashboard/scene_00_intro.html` fullscreen
+**Audio:** `audio/scene_00.mp3`
+**Guardás:** `video/scene_00.mp4`
 
-**Script:**
-> "Hospitals are deploying AI to summarize patient records at scale.
-> But what happens when the AI gets it wrong?
-> This note says: No Known Drug Allergies.
-> The AI summary says: documented penicillin allergy.
-> That's a hallucination. And in a clinical setting, it can kill a patient.
-> The question is — who's testing the AI before it reaches the doctor?"
-
-**Duration:** 20 seconds
+> *"Aegis. CI/CD for Regulated AI. One AI should always watch another — before errors reach humans."*
 
 ---
 
-## SCENE 2 — THE SOLUTION (0:20–0:45)
+## ESCENA 01 — THE PROBLEM (0:05–0:30) · audio: 24.8s
 
-**Screen:** Dashboard overview — pipeline diagram visible (4 stages: SUMMARIZER → SENTINEL → CORRECTION → RE-VALIDATE)
+**Grabás:** `src/dashboard/scene_01_problem.html` fullscreen
+**Audio:** `audio/scene_01.mp3`
+**Guardás:** `video/scene_01.mp4`
 
-**Script:**
-> "Aegis is a Test Cloud-native validation framework built on UiPath.
-> It generates test scenarios from clinical requirements,
-> executes them through a 4-layer AI validation pipeline,
-> auto-corrects failures, and escalates critical cases to human review.
-> Think of it as CI/CD — but for AI agents in regulated industries."
-
-**Show while talking:** Point to each stage in the pipeline UI
-
-**Duration:** 25 seconds
+> *"Hospitals are deploying AI to summarize patient records at scale. But what happens when the AI gets it wrong? This note says: No Known Drug Allergies. The AI summary says: documented penicillin allergy. That's a hallucination. And in a clinical setting, it can kill a patient. The question is — who's testing the AI before it reaches the doctor?"*
 
 ---
 
-## SCENE 3 — UIPATH PLATFORM (0:45–1:15)
+## ESCENA 02 — THE SOLUTION (0:30–0:53) · audio: 22.9s
 
-**Screen:** UiPath Agent Builder — switch between Solution 6 and Solution 7
+**Grabás:** `src/dashboard/scene_02_solution.html` fullscreen
+**Audio:** `audio/scene_02.mp3`
+**Guardás:** `video/scene_02.mp4`
 
-**Script:**
-> "The orchestration runs on UiPath Automation Cloud.
-> Agent Builder hosts two agents:
-> MedicalRecordsSummarizer — receives a clinical note and generates a structured summary.
-> SENTINEL Validator — receives the summary and the original note and runs 4-layer validation."
-
-**Action:**
-- Click Solution 6 (SENTINEL Validator v1.0.2) — show agent config
-- Click Solution 7 (MedicalRecordsSummarizer v1.0.0) — show agent config
-
-**Script continues:**
-> "Both agents are deployed and active on UiPath Automation Cloud."
-
-**Show:** Orchestrator → Shared folder → Deployments overview — 3 green Active badges
-
-**Script continues:**
-> "The full pipeline is orchestrated by UiPath Maestro.
-> Here's the BPMN — MedicalRecordsSummarizer feeds into SENTINEL Validator,
-> then a gateway routes to Action Center for human review, or auto-approves.
-> The process is built and validated with zero issues.
-> Publish is blocked by a known UiPath staging bug — documented in the community forum —
-> but the individual agents are fully deployed and running."
-
-**Show:** UiPath Studio Web — Solution 8 → Maestro BPMN → Process.bpmn
-Show the flow: Start → MedicalRecordsSummarizer → SENTINEL Validator → Escalate? gateway → YES: Clinical Review Action Center / NO: PASS
-
-**Duration:** 30 seconds
+> *"Aegis is a Test Cloud-native validation framework built on UiPath. It generates test scenarios from clinical requirements, executes them through a 4-layer AI validation pipeline, auto-corrects failures, and escalates critical cases to human review. Think of it as CI/CD — but for AI agents in regulated industries."*
 
 ---
 
-## SCENE 4 — LIVE PIPELINE DEMO — TC-002 (1:15–2:30)
+## ESCENA 03 — UIPATH PLATFORM (0:53–1:40) · audio: 46.6s
 
-**Screen:** Dashboard at localhost:3000 — TC-002 selected
+**Grabás:** Arrancás con `src/dashboard/scene_03_architecture.html` fullscreen (~15s), después switcheás a:
+- Agent Builder → Solution 7 → Solution 6
+- Orchestrator → Deployments (3 badges verdes)
+- Studio Web → Maestro BPMN → Process.bpmn
 
-**Script:**
-> "Let me show you the pipeline running live.
-> TC-002: A 32-year-old female with an upper respiratory infection.
-> The source note says NKDA — No Known Drug Allergies.
-> Watch what the AI summary produced."
+**Audio:** `audio/scene_03.mp3`
+**Guardás:** `video/scene_03.mp4`
 
-**Action:** Click RUN PIPELINE
-
-**Show while pipeline runs:**
-- Stage 1 SUMMARIZER → COMPLETE
-- Stage 2 SENTINEL → FAIL · CRITICAL · flags firing
-- Stage 3 CORRECTION → FIXED
-
-**Script:**
-> "Layer 3 detects a direct contradiction:
-> source says NKDA, summary invents a penicillin allergy.
-> Verdict: FAIL. Severity: CRITICAL."
-
-**Show:** Flagged claims list — highlight the allergy contradiction
-
-**Script:**
-> "The Correction Agent rewrites the summary, removing the fabricated allergy.
-> SENTINEL re-validates. The corrected version passes."
-
-**Show:** Stage 4 RE-VALIDATE → PASS. Auto-corrected banner. Diff view before/after.
-
-**Duration:** 75 seconds
+> *"The orchestration runs on UiPath Automation Cloud. Agent Builder hosts two agents: MedicalRecordsSummarizer and SENTINEL Validator. Both deployed and active. The full pipeline is orchestrated by UiPath Maestro. The BPMN is built and validated with zero issues. Publish is blocked by a known UiPath staging bug — documented in the community forum — but the individual agents are fully deployed and running."*
 
 ---
 
-## SCENE 5 — TC-005 ESCALATION (2:30–3:00)
+## ESCENA 04 — LIVE PIPELINE TC-002 (1:40–2:16) · audio: 36.4s
 
-**Screen:** Dashboard — click TC-005
+**Grabás:** Dashboard localhost:3000 — TC-002 seleccionado → click RUN PIPELINE → dejás correr
+**Audio:** `audio/scene_04.mp3`
+**Guardás:** `video/scene_04.mp4`
 
-**Script:**
-> "Not every failure can be auto-corrected.
-> TC-005: A 72-year-old patient. Potassium at 6.8 milliequivalents per liter.
-> That's a medical emergency. The AI summary said: follow up in 15 days."
+**Timing clicks:**
+- 0s — TC-002 seleccionado visible
+- 5s — click RUN PIPELINE
+- 10s — SUMMARIZER COMPLETE visible
+- 15s — SENTINEL FAIL · CRITICAL · flags
+- 25s — CORRECTION FIXED
+- 30s — RE-VALIDATE PASS · diff view visible
 
-**Action:** Click RUN PIPELINE — let it run
-
-**Show:** ESCALATED TO HUMAN REVIEW banner (red). escalate_to_human: true.
-
-**Script:**
-> "SENTINEL flags critical omissions that cannot be auto-fixed.
-> The system escalates to physician review."
-
-**Duration:** 30 seconds
+> *"Let me show you the pipeline running live. TC-002: A 32-year-old female. Source note: NKDA. AI summary invents a penicillin allergy. Layer 3 detects the contradiction. Verdict: FAIL. CRITICAL. The Correction Agent rewrites the summary. SENTINEL re-validates. The corrected version passes."*
 
 ---
 
-## SCENE 6 — SCENARIO GENERATOR (3:00–3:30)
+## ESCENA 05 — TC-005 ESCALATION (2:16–2:39) · audio: 22.7s
 
-**Screen:** VSCode terminal — clear it first
+**Grabás:** Dashboard — click TC-005 → click RUN PIPELINE → ESCALATED banner rojo
+**Audio:** `audio/scene_05.mp3`
+**Guardás:** `video/scene_05.mp4`
 
-**Script:**
-> "Aegis doesn't just run predefined tests — it generates new ones."
+> *"Not every failure can be auto-corrected. TC-005: A 72-year-old patient. Potassium at 6.8. Medical emergency. The AI summary said: follow up in 15 days. SENTINEL flags critical omissions. The system escalates to physician review."*
 
-**Action:** Type and run live:
+---
+
+## ESCENA 06 — SCENARIO GENERATOR (2:39–3:00) · audio: 20.6s
+
+**Grabás:** VSCode terminal limpia → corrés el comando
+**Audio:** `audio/scene_06.mp3`
+**Guardás:** `video/scene_06.mp4`
+
+**Comando a correr:**
 ```
-node src/core/scenario-generator.js --requirements "Elderly patient, 78yo, on warfarin. INR 5.2 — supratherapeutic. AI summary omits bleeding risk and dose hold instruction."
+node src/core/scenario-generator.js --requirements "Elderly patient, 78yo, on warfarin. INR 5.2 supratherapeutic. AI summary omits bleeding risk and dose hold instruction."
 ```
 
-**Show:** Terminal output — TC generating, summary printed with flags and severity
-
-**Script:**
-> "In seconds, Aegis created a new test case — clinically coherent,
-> with expected failure modes, layer assignments, and severity classifications.
-> This is Test Design as an agentic capability."
-
-**Duration:** 30 seconds
+> *"Aegis doesn't just run predefined tests — it generates new ones. From natural language requirements, the Scenario Generator creates a complete test case in seconds — clinically coherent, with expected failure modes and severity classifications. This is Test Design as an agentic capability."*
 
 ---
 
-## SCENE 7 — CODING AGENTS BONUS (3:30–3:50)
+## ESCENA 07 — CODING AGENTS BONUS (3:00–3:17) · audio: 17.3s
 
-**Screen:** VSCode — open `docs/claude-code-evidence.md`
+**Grabás:** VSCode → abrís `docs/claude-code-evidence.md` → scrolleás la tabla de componentes
+**Audio:** `audio/scene_07.mp3`
+**Guardás:** `video/scene_07.mp4`
 
-**Script:**
-> "Aegis was built with Claude Code — one of UiPath's supported coding agents.
-> Claude Code scaffolded the 4-layer pipeline architecture,
-> generated the clinical test scenarios,
-> and built the dashboard from scratch.
-> Full evidence is documented in the repository."
-
-**Show:** Component table in claude-code-evidence.md — briefly scan it
-
-**Duration:** 20 seconds
+> *"Aegis was built with Claude Code — one of UiPath's supported coding agents. Claude Code scaffolded the 4-layer pipeline, generated the clinical test scenarios, and built the dashboard from scratch. Full evidence is documented in the repository."*
 
 ---
 
-## SCENE 8 — EXPORT + METRICS (3:50–4:20)
+## ESCENA 08 — EXPORT + METRICS (3:17–3:39) · audio: 21.5s
 
-**Screen:** Dashboard — run TC-007, then click EXPORT FULL RESULT
+**Grabás:** Dashboard → TC-007 → RUN PIPELINE → click EXPORT → JSON se descarga → mostrás métricas derecha
+**Audio:** `audio/scene_08.mp3`
+**Guardás:** `video/scene_08.mp4`
 
-**Script:**
-> "Every run produces a structured, exportable audit record.
-> Scenario ID, verdict, all flagged claims with source evidence,
-> the flawed summary, the corrected summary, the revalidation result.
-> Full traceability — claim by claim, layer by layer."
-
-**Show:** Downloaded JSON file opens briefly
-
-**Script:**
-> "After 7 test cases, here's what the session metrics show."
-
-**Show:** Dashboard right panel — Safe Rate, Processed, Auto-Fixed, Escalated
-
-**Duration:** 30 seconds
+> *"Every run produces a structured, exportable audit record. Scenario ID, verdict, all flagged claims with source evidence, the flawed summary, the corrected summary, the revalidation result. Full traceability — claim by claim, layer by layer. After 7 test cases, here's what the session metrics show."*
 
 ---
 
-## SCENE 9 — CLOSE (4:20–4:40)
+## ESCENA 09 — CLOSE (3:39–3:59) · audio: 20.2s
 
-**Screen:** Dashboard overview OR clean title view
+**Grabás:** Dashboard overview → scrolleás para mostrar todo → al final mostrás el GitHub URL en el browser
+**Audio:** `audio/scene_09.mp3`
+**Guardás:** `video/scene_09.mp4`
 
-**Script:**
-> "Aegis. CI/CD for Regulated AI.
-> Generate tests. Execute them. Evaluate with domain intelligence.
-> Auto-correct. Escalate when it matters.
-> Built on UiPath. Open source."
-
-**Show:** GitHub URL: github.com/Marianooss/Aegis
-
-**Duration:** 20 seconds
+> *"Aegis. CI/CD for Regulated AI. Generate tests. Execute them. Evaluate with domain intelligence. Auto-correct. Escalate when it matters. Built on UiPath. Open source. github.com/Marianooss/Aegis"*
 
 ---
 
-## TOTAL: ~4:40 — 20 seconds buffer before the 5:00 hard limit
+## TOTAL: ~3:59 · 1:01 de margen antes del límite de 5:00
 
 ---
 
-## RECORDING NOTES
+## ORDEN DE GRABACIÓN RECOMENDADO
 
-**DO:**
-- Use your natural voice — energy matters more than perfection
-- Pause 1 second between scenes — easier to edit
-- If you make a mistake mid-scene, pause 2 seconds and redo that line only
-- Record scenes out of order if needed — edit in post
+Grabá en este orden para minimizar switches:
 
-**DON'T:**
-- Show your .env file or API keys
-- Show personal email or account details in UiPath UI
-- Use background music (copyright issues on YouTube)
-- Read the script word for word — know the beats, not the exact words
+1. **Escenas HTML primero** (no dependen del dashboard):
+   - scene_00 → scene_01 → scene_02 → scene_03 (parte HTML)
 
-**UPLOAD:**
-- YouTube (unlisted is fine, link must work publicly)
-- Title: "Aegis — CI/CD for Regulated AI | UiPath AgentHack 2026"
-- Description: "Track 3: Test Cloud submission. UiPath AgentHack 2026. github.com/Marianooss/Aegis"
+2. **UiPath Cloud** (tenés que tener las tabs abiertas):
+   - scene_03 (parte Agent Builder + Orchestrator + Maestro)
+
+3. **Dashboard** (node server.js corriendo):
+   - scene_04 → scene_05 → scene_08 → scene_09
+
+4. **VSCode terminal**:
+   - scene_06 → scene_07
 
 ---
 
-## BACKUP PLAN — if dashboard has issues during recording
+## DESPUÉS DE GRABAR TODAS LAS ESCENAS
 
-Record in this order instead:
+```powershell
+node aegis_video.js --combine
+```
 
-1. Scene 1 — text editor only, show TC-002 note with NKDA highlighted
-2. Scene 3 — UiPath Agent Builder always works, no local deps
-3. Scene 7 — VSCode only, claude-code-evidence.md
-4. Scene 6 — terminal only, scenario-generator running
-5. Scene 4+5 condensed — terminal output of `node src/core/pipeline.js --test` instead of dashboard UI
+→ genera `output/aegis_final.mp4` + `output/aegis_subtitles.srt`
 
-The video must show the solution running. Terminal output of verified TCs counts as "running" per the hackathon rules.
+**YouTube upload:**
+- Título: "Aegis — CI/CD for Regulated AI | UiPath AgentHack 2026"
+- Descripción: "Track 3: Test Cloud submission. UiPath AgentHack 2026. github.com/Marianooss/Aegis"
+- Subtítulos: subí `aegis_subtitles.srt` en YouTube Studio → Subtítulos
+- Visibilidad: Unlisted (el link funciona públicamente)
+
+**Devpost:**
+- Pegá el link de YouTube
+- Publicá el submission

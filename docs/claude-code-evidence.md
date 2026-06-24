@@ -15,25 +15,25 @@ Claude Code scaffolded the full 4-layer sequential architecture:
 - **Layer 3 — Contradiction Detection:** parallel execution pattern with Promise.all
 - **Layer 4 — Critical Completeness Scan:** independent analysis + aggregator input
 
-Claude Code generated the initial prompt files in `src/prompts/` and iterated on them based on test case outputs across 4 sessions.
+Claude Code generated the initial prompt files in `agents/sentinel/` and iterated on them based on test case outputs across 4 sessions.
 
-### 2. Test Scenario Design (`src/scenarios/`)
-Claude Code generated all 6 clinical test cases (TC-001 through TC-006) including:
+### 2. Test Scenario Design (`test-scenarios/`)
+Claude Code generated all 7 clinical test cases (TC-001 through TC-007) including:
 - Clinically coherent medical notes with embedded failure modes
 - Expected verdict + severity + flagged_claims for each scenario
-- TC-005 (hyperkalemia + insulin overdose) — the most clinically sophisticated case, designed to trigger the `escalate_to_human` path
+- TC-005 (hyperkalemia K⁺6.8 + 10 critical omissions) — the most clinically sophisticated case, designed to trigger the `escalate_to_human` path
 
 ### 3. Dashboard Server (`src/dashboard/server.js`)
 Claude Code built the Node.js Express dashboard including:
 - Pipeline animation with real-time step tracking
 - Diff view (original summary vs corrected summary)
 - Audit metrics panel (safe rate, escalation count, correction rate)
-- 6 TC runner with pass/fail indicators
+- 7 TC runner with pass/fail indicators
 
 ### 4. Aggregator Logic (`agents/sentinel/aggregator.js`)
 Claude Code designed the join logic that merges Layer 1 claim extraction with Layer 2 trace results using `claim_id` as the primary key — the core deduplication mechanism that enables structured verdict generation.
 
-### 5. Correction Agent Loop (`agents/correction/correction-agent.js`)
+### 5. Correction Agent Loop (`src/agents/correction.js`)
 Claude Code implemented the auto-correction loop:
 - Receives SENTINEL verdict with flagged claims
 - Generates corrected summary with explicit fixes
@@ -44,7 +44,7 @@ Claude Code implemented the auto-correction loop:
 
 ## Evidence of Integration
 
-The Claude Code output is **not a reference** — it is the working codebase. Every file listed above is directly executable and tested across 6 scenarios.
+The Claude Code output is **not a reference** — it is the working codebase. Every file listed above is directly executable and tested across 7 scenarios.
 
 ### Verifiable Evidence
 - `docs/claude-code-log.md` — session log documenting 5 Claude Code sessions with specific contributions per session
@@ -80,7 +80,7 @@ Export: `docs/exports/TC-007-agentbuilder-E2E-PASS-2026-06-21.json`
 | Test scenarios (TC-001–007) | Generated + validated | ✅ Live in test-scenarios/ |
 | Dashboard UI | Built from scratch | ✅ Running at localhost:3000 |
 | Aggregator join logic | Designed claim_id schema | ✅ Live in aggregator.js |
-| Correction loop | Designed retry + escalation | ✅ Live in correction-agent.js |
+| Correction loop | Designed retry + escalation | ✅ Live in src/agents/correction.js |
 | Scenario Generator | Built CLI + few-shot prompting | ✅ Live in src/core/scenario-generator.js |
 | Export audit trail | exportResult() + JSON download | ✅ Live in src/dashboard/server.js |
 | DECISION_LOG | ADR-007 temperature=0 decision | ✅ Live in docs/DECISION_LOG.md |

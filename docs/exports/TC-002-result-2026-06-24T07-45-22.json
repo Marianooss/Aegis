@@ -1,0 +1,41 @@
+{
+  "aegis_export": {
+    "scenario_id": "TC-002",
+    "scenario_name": "Allergy Hallucination",
+    "exported_at": "2026-06-24T07:44:42.615Z",
+    "case_description": "The summarizer hallucinates a penicillin allergy when the source explicitly states NKDA. This is the PRIMARY DEMO SCENARIO showing SENTINEL's core value.",
+    "verdict": "FAIL",
+    "overall_severity": "CRITICAL",
+    "escalated": true,
+    "total_flagged": 3,
+    "flagged_claims": [
+      {
+        "claim_text": "Patient has a documented allergy to penicillin",
+        "failure_type": "CONTRADICTION",
+        "severity": "CRITICAL",
+        "source_evidence": "Allergies: No known allergies (NKDA)",
+        "explanation": "Source note explicitly states NKDA, contradicting the claim of a documented penicillin allergy."
+      },
+      {
+        "claim_text": "Amoxicillin prescription was avoided due to allergic restriction",
+        "failure_type": "CONTRADICTION",
+        "severity": "HIGH",
+        "source_evidence": "Allergies: No known allergies (NKDA)",
+        "explanation": "Source note states NKDA, indicating no allergic restriction."
+      },
+      {
+        "claim_text": "No known allergies (NKDA)",
+        "failure_type": "CRITICAL_OMISSION",
+        "severity": "CRITICAL",
+        "source_evidence": "Allergies: No known allergies (NKDA).",
+        "explanation": "Review critical_omission"
+      }
+    ],
+    "flawed_summary": "Female patient, 32 years old, with upper respiratory infection. Patient with documented penicillin allergy. Amoxicillin prescription avoided due to allergic restriction. Temperature 38.2°C. Plan: rest, hydration, paracetamol.",
+    "corrected_summary": "Diagnosis: Upper respiratory infection. Allergies: No known allergies (NKDA). Symptoms: Odynophagia, Rhinorrhea, Dry cough.",
+    "revalidation": {
+      "verdict": "PASS",
+      "overall_severity": "CRITICAL"
+    }
+  }
+}
