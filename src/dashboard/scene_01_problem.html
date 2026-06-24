@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aegis — Scene 1: The Problem</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #060A14;
+  --bg2: #0C1220;
+  --teal: #00E5CC;
+  --red: #FF3B47;
+  --amber: #FFB020;
+  --white: #F0F4FF;
+  --dim: #4A5568;
+}
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'JetBrains Mono', monospace;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,229,204,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,204,.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+/* HEADER */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 32px;
+  border-bottom: 1px solid rgba(0,229,204,.15);
+  background: rgba(6,10,20,.95);
+  z-index: 10;
+}
+.logo { display: flex; align-items: center; gap: 12px; }
+.logo-icon {
+  width: 36px; height: 36px;
+  border: 1.5px solid rgba(0,229,204,.4);
+  border-radius: 6px;
+  background: rgba(0,229,204,.06);
+  box-shadow: 0 0 14px rgba(0,229,204,.18);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.logo-icon img { width: 36px; height: 36px; object-fit: cover; }
+.logo-name { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px; letter-spacing: 4px; color: var(--teal); }
+.logo-sub { font-size: 9px; color: var(--dim); letter-spacing: 2px; margin-top: 2px; }
+.scene-badge {
+  font-size: 9px; letter-spacing: 3px; color: var(--red);
+  border: 1px solid rgba(255,59,71,.3);
+  padding: 4px 12px; border-radius: 20px;
+  background: rgba(255,59,71,.05);
+}
+
+/* MAIN */
+main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  padding: 0;
+  position: relative;
+}
+
+/* LEFT — SOURCE NOTE */
+.left-panel {
+  border-right: 1px solid rgba(0,229,204,.1);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.panel-label {
+  font-size: 8px; letter-spacing: 4px; color: var(--teal);
+  display: flex; align-items: center; gap: 8px;
+}
+.panel-label::after {
+  content: ''; flex: 1; height: 1px; background: rgba(0,229,204,.2);
+}
+.note-box {
+  background: var(--bg2);
+  border: 1px solid rgba(0,229,204,.12);
+  border-radius: 6px;
+  padding: 20px;
+  flex: 1;
+  font-size: 11px;
+  line-height: 1.8;
+  color: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+.note-box .section-title {
+  font-size: 9px; letter-spacing: 2px; color: var(--dim);
+  margin-bottom: 6px; margin-top: 14px;
+}
+.note-box .section-title:first-child { margin-top: 0; }
+.highlight-nkda {
+  background: rgba(0,229,204,.15);
+  border: 1px solid rgba(0,229,204,.4);
+  color: var(--teal);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 700;
+  animation: pulse-nkda 2s infinite;
+}
+@keyframes pulse-nkda {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0,229,204,.4); }
+  50% { box-shadow: 0 0 8px 3px rgba(0,229,204,.2); }
+}
+
+/* RIGHT — AI SUMMARY */
+.right-panel {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.summary-box {
+  background: var(--bg2);
+  border: 1px solid rgba(255,59,71,.25);
+  border-radius: 6px;
+  padding: 20px;
+  flex: 1;
+  font-size: 11px;
+  line-height: 1.8;
+  color: var(--white);
+  position: relative;
+}
+.hallucinated {
+  background: rgba(255,59,71,.12);
+  border: 1px solid rgba(255,59,71,.5);
+  color: var(--red);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 700;
+  text-decoration: line-through;
+  animation: pulse-red 1.5s infinite;
+}
+@keyframes pulse-red {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,59,71,.4); }
+  50% { box-shadow: 0 0 10px 3px rgba(255,59,71,.2); }
+}
+.ai-badge {
+  position: absolute;
+  top: 12px; right: 12px;
+  font-size: 8px; letter-spacing: 2px;
+  background: rgba(255,59,71,.1);
+  border: 1px solid rgba(255,59,71,.3);
+  color: var(--red);
+  padding: 3px 10px; border-radius: 20px;
+}
+
+/* CENTER ARROW */
+.center-arrow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.arrow-box {
+  background: var(--bg);
+  border: 1px solid rgba(255,59,71,.4);
+  border-radius: 50%;
+  width: 52px; height: 52px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 0 20px rgba(255,59,71,.2);
+  animation: rotate-warning 3s linear infinite;
+}
+@keyframes rotate-warning {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); box-shadow: 0 0 30px rgba(255,59,71,.35); }
+}
+.arrow-label {
+  font-size: 7px; letter-spacing: 2px; color: var(--red);
+  text-align: center; line-height: 1.4;
+}
+
+/* FOOTER — QUESTION */
+footer {
+  padding: 16px 32px;
+  border-top: 1px solid rgba(0,229,204,.1);
+  text-align: center;
+  background: rgba(6,10,20,.9);
+}
+.question {
+  font-size: 13px; color: var(--dim);
+  letter-spacing: 1px;
+  opacity: 0;
+  animation: fade-in-question 1s ease 2s forwards;
+}
+.question span { color: var(--teal); font-weight: 700; }
+@keyframes fade-in-question {
+  to { opacity: 1; }
+}
+
+/* ENTRY ANIMATIONS */
+.left-panel { animation: slide-in-left 0.6s ease 0.2s both; }
+.right-panel { animation: slide-in-right 0.6s ease 0.4s both; }
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">
+      <img src="aegis-shield.png" alt="Aegis" onerror="this.parentElement.innerHTML='<span style=\'font-family:Syne,sans-serif;font-weight:800;font-size:13px;color:#00E5CC\'>A</span>'">
+    </div>
+    <div>
+      <div class="logo-name">AEGIS</div>
+      <div class="logo-sub">CI/CD FOR REGULATED AI · UiPath AgentHack 2026</div>
+    </div>
+  </div>
+  <div class="scene-badge">SCENE 1 · THE PROBLEM</div>
+</header>
+
+<main>
+  <!-- LEFT: SOURCE NOTE -->
+  <div class="left-panel">
+    <div class="panel-label">SOURCE CLINICAL NOTE — GROUND TRUTH</div>
+    <div class="note-box">
+      <div class="section-title">PATIENT</div>
+      Female patient, 32 years old. Outpatient visit.
+
+      <div class="section-title">REASON FOR VISIT</div>
+      Upper respiratory infection · 3 days evolution
+
+      <div class="section-title">ALLERGIES</div>
+      <span class="highlight-nkda">No known allergies (NKDA)</span>
+
+      <div class="section-title">DIAGNOSIS</div>
+      Viral upper respiratory infection.
+
+      <div class="section-title">PLAN</div>
+      Relative rest · abundant hydration<br>
+      Paracetamol 500mg q8h if fever &gt;38°C<br>
+      <strong>No antibiotic prescription</strong> — viral picture<br>
+      Consult if worsens or persists &gt;5 days
+    </div>
+  </div>
+
+  <!-- CENTER ARROW -->
+  <div class="center-arrow">
+    <div class="arrow-box">⚠️</div>
+    <div class="arrow-label">AI<br>HALLUCINATION</div>
+  </div>
+
+  <!-- RIGHT: AI SUMMARY -->
+  <div class="right-panel">
+    <div class="panel-label" style="color: var(--red)">AI-GENERATED SUMMARY — CONTAINS HALLUCINATION</div>
+    <div class="summary-box">
+      <div class="ai-badge">AI OUTPUT</div>
+
+      Female patient, 32 years old, with upper respiratory infection.<br><br>
+
+      Patient with <span class="hallucinated">documented penicillin allergy</span>.<br><br>
+
+      Amoxicillin prescription avoided due to allergic restriction.<br><br>
+
+      Temperature 38.2°C.<br><br>
+
+      Plan: rest, hydration, paracetamol.
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="question">
+    Who's testing the AI <span>before it reaches the doctor?</span>
+  </div>
+</footer>
+
+</body>
+</html>

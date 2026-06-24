@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aegis — Scene 3: Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0px; box-sizing: border-box; }
+:root {
+  --bg: #060A14; --bg2: #0C1220; --bg3: #111928;
+  --teal: #00E5CC; --red: #FF3B47; --amber: #FFB020;
+  --blue: #4D9EFF; --white: #F0F4FF; --dim: #4A5568; --dim2: #1A2535;
+  --uipath: #FA4616;
+}
+html, body { height: 100%; overflow: hidden; }
+body {
+  background: var(--bg); color: var(--white);
+  font-family: 'JetBrains Mono', monospace;
+  display: flex; flex-direction: column;
+}
+body::before {
+  content: ''; position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,229,204,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,204,.03) 1px, transparent 1px);
+  background-size: 40px 40px; pointer-events: none;
+}
+header {
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 34px;
+  border-bottom: 1px solid rgba(0,229,204,.15);
+  background: rgba(6,10,20,.95); z-index: 10;
+}
+.logo { display: flex; align-items: center; gap: 12px; }
+.logo-icon {
+  width: 30px; height: 30px;
+  border: 1.5px solid rgba(0,229,204,.4); border-radius: 5px;
+  background: rgba(0,229,204,.06); box-shadow: 0 0 10px rgba(0,229,204,.15);
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.logo-icon img { width: 30px; height: 30px; object-fit: cover; }
+.logo-name { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 19.2px; letter-spacing: 4px; color: var(--teal); }
+.logo-sub { font-size: 9.6px; color: var(--dim); letter-spacing: 2px; margin-top: 1px; }
+.scene-badge {
+  font-size: 9.6px; letter-spacing: 3px; color: var(--amber);
+  border: 1px solid rgba(255,176,32,.3); padding: 4px 12px; border-radius: 20px;
+  background: rgba(255,176,32,.05);
+}
+
+main {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 12px 38px; gap: 12px;
+}
+
+.section-label {
+  font-size: 8.4px; letter-spacing: 4px; color: var(--dim);
+  text-align: center;
+}
+
+/* TOP ROW */
+.top-row {
+  display: flex; align-items: center; gap: 0;
+  width: 100%;
+  animation: fade-up 0.6s ease 0.3s both;
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.arch-box {
+  flex: 1; padding: 12px 14px;
+  border-radius: 6px;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 6px; text-align: center;
+}
+.arch-box .icon { font-size: 24.0px; }
+.arch-box .title { font-size: 10.8px; font-weight: 700; letter-spacing: 1.5px; }
+.arch-box .subtitle { font-size: 9.0px; color: var(--dim); line-height: 1.4; }
+.arch-box .badge {
+  font-size: 8.4px; letter-spacing: 1px;
+  padding: 2px 8px; border-radius: 20px; margin-top: 2px;
+}
+
+.box-input   { background: var(--bg2); border: 1px solid var(--dim2); }
+.box-agent7  { background: rgba(0,229,204,.05); border: 1.5px solid rgba(0,229,204,.3); }
+.box-agent6  { background: rgba(77,158,255,.05); border: 1.5px solid rgba(77,158,255,.3); }
+.box-maestro { background: rgba(250,70,22,.05); border: 1.5px solid rgba(250,70,22,.3); }
+
+.box-agent7 .title  { color: var(--teal); }
+.box-agent6 .title  { color: var(--blue); }
+.box-maestro .title { color: var(--uipath); }
+.box-input .title   { color: var(--dim); }
+
+.box-agent7 .badge  { background: rgba(0,229,204,.1); border: 1px solid rgba(0,229,204,.3); color: var(--teal); }
+.box-agent6 .badge  { background: rgba(77,158,255,.1); border: 1px solid rgba(77,158,255,.3); color: var(--blue); }
+.box-maestro .badge { background: rgba(250,70,22,.1); border: 1px solid rgba(250,70,22,.3); color: var(--uipath); }
+
+.arch-arrow {
+  flex-shrink: 0; width: 36px;
+  display: flex; align-items: center; justify-content: center;
+}
+.arch-arrow svg { width: 28px; color: var(--dim); }
+
+/* LAYERS ROW */
+.layers-row {
+  display: flex; gap: 7px;
+  width: 100%;
+  animation: fade-up 0.6s ease 0.8s both;
+}
+.layer-box {
+  flex: 1; padding: 11px 13px;
+  border-radius: 5px;
+  display: flex; flex-direction: column; gap: 5px;
+  background: var(--bg2);
+}
+.layer-box:nth-child(1) { border: 1px solid rgba(0,229,204,.2); }
+.layer-box:nth-child(2) { border: 1px solid rgba(77,158,255,.2); }
+.layer-box:nth-child(3) { border: 1px solid rgba(255,176,32,.2); }
+.layer-box:nth-child(4) { border: 1px solid rgba(255,59,71,.2); }
+
+.layer-num {
+  font-size: 8.4px; letter-spacing: 1.5px;
+  padding: 2px 7px; border-radius: 3px; display: inline-block;
+  width: fit-content;
+}
+.layer-box:nth-child(1) .layer-num { background: rgba(0,229,204,.15); color: var(--teal); }
+.layer-box:nth-child(2) .layer-num { background: rgba(77,158,255,.15); color: var(--blue); }
+.layer-box:nth-child(3) .layer-num { background: rgba(255,176,32,.15); color: var(--amber); }
+.layer-box:nth-child(4) .layer-num { background: rgba(255,59,71,.15); color: var(--red); }
+
+.layer-title { font-size: 10.2px; font-weight: 700; color: var(--white); letter-spacing: 1px; }
+.layer-desc  { font-size: 9.0px; color: var(--dim); line-height: 1.4; }
+
+/* BOTTOM ROW */
+.bottom-row {
+  display: flex; gap: 10px;
+  width: 100%;
+  animation: fade-up 0.6s ease 1.2s both;
+}
+.outcome-box {
+  flex: 1; padding: 12px 17px;
+  border-radius: 5px;
+  display: flex; align-items: center; gap: 12px;
+}
+.outcome-pass   { background: rgba(0,229,204,.05); border: 1.5px solid rgba(0,229,204,.25); }
+.outcome-fix    { background: rgba(0,229,204,.05); border: 1.5px solid rgba(0,229,204,.2); }
+.outcome-human  { background: rgba(255,59,71,.05); border: 1.5px solid rgba(255,59,71,.25); }
+
+.outcome-icon { font-size: 21.6px; flex-shrink: 0; }
+.outcome-text .title { font-size: 10.2px; font-weight: 700; letter-spacing: 1.5px; }
+.outcome-text .desc  { font-size: 9.0px; color: var(--dim); margin-top: 3px; line-height: 1.4; }
+.outcome-pass .title   { color: var(--teal); }
+.outcome-fix .title    { color: var(--teal); }
+.outcome-human .title  { color: var(--red); }
+
+/* MAESTRO NOTE */
+.maestro-note {
+  width: 100%;
+  padding: 8px 19px;
+  border: 1px solid rgba(250,70,22,.2);
+  border-radius: 5px;
+  background: rgba(250,70,22,.03);
+  font-size: 9.0px; color: var(--dim);
+  display: flex; align-items: center; gap: 10px;
+  animation: fade-up 0.5s ease 1.5s both;
+}
+.maestro-note strong { color: var(--uipath); }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <div class="logo-icon">
+      <img src="aegis-shield.png" alt="Aegis" onerror="this.parentElement.innerHTML='<span style=font-family:Syne,sans-serif;font-weight:800;font-size:12px;color:#00E5CC>A</span>'">
+    </div>
+    <div>
+      <div class="logo-name">AEGIS</div>
+      <div class="logo-sub">CI/CD FOR REGULATED AI · UiPath AgentHack 2026</div>
+    </div>
+  </div>
+  <div class="scene-badge">SCENE 3 · UIPATH ARCHITECTURE</div>
+</header>
+
+<main>
+  <div class="section-label">UIPATH AUTOMATION CLOUD — DEPLOYED COMPONENTS</div>
+  <div class="top-row">
+    <div class="arch-box box-input">
+      <div class="icon">📋</div>
+      <div class="title">CLINICAL NOTE</div>
+      <div class="subtitle">Raw patient record<br>input to the pipeline</div>
+    </div>
+    <div class="arch-arrow">
+      <svg viewBox="0 0 28 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <line x1="0" y1="8" x2="22" y2="8"/><polyline points="16,3 22,8 16,13"/>
+      </svg>
+    </div>
+    <div class="arch-box box-agent7">
+      <div class="icon">📝</div>
+      <div class="title">MEDICAL SUMMARIZER</div>
+      <div class="subtitle">Agent Builder · Solution 7<br>claude-sonnet-4-6</div>
+      <div class="badge">✅ DEPLOYED v1.0.0</div>
+    </div>
+    <div class="arch-arrow">
+      <svg viewBox="0 0 28 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <line x1="0" y1="8" x2="22" y2="8"/><polyline points="16,3 22,8 16,13"/>
+      </svg>
+    </div>
+    <div class="arch-box box-agent6">
+      <div class="icon">🛡️</div>
+      <div class="title">SENTINEL VALIDATOR</div>
+      <div class="subtitle">Agent Builder · Solution 6<br>4-layer validation engine</div>
+      <div class="badge">✅ DEPLOYED v1.0.2</div>
+    </div>
+    <div class="arch-arrow">
+      <svg viewBox="0 0 28 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <line x1="0" y1="8" x2="22" y2="8"/><polyline points="16,3 22,8 16,13"/>
+      </svg>
+    </div>
+    <div class="arch-box box-maestro">
+      <div class="icon">🔀</div>
+      <div class="title">MAESTRO BPMN</div>
+      <div class="subtitle">Solution 8 · Full pipeline<br>orchestration + HITL gateway</div>
+      <div class="badge">⚠️ BUILT · 0 ISSUES</div>
+    </div>
+  </div>
+
+  <div class="section-label">SENTINEL 4-LAYER VALIDATION ENGINE</div>
+  <div class="layers-row">
+    <div class="layer-box">
+      <div class="layer-num">L1 · EXTRACT</div>
+      <div class="layer-title">Claim Extraction</div>
+      <div class="layer-desc">Decompose summary into atomic verifiable claims with IDs and types</div>
+    </div>
+    <div class="layer-box">
+      <div class="layer-num">L2 · TRACE</div>
+      <div class="layer-title">Hallucination Detection</div>
+      <div class="layer-desc">Verify each claim has source evidence in the original note</div>
+    </div>
+    <div class="layer-box">
+      <div class="layer-num">L3 · CONTRADICT</div>
+      <div class="layer-title">Contradiction Detection</div>
+      <div class="layer-desc">Find source text that directly opposes summary claims (parallel with L2)</div>
+    </div>
+    <div class="layer-box">
+      <div class="layer-num">L4 · CRITICAL</div>
+      <div class="layer-title">Critical Completeness</div>
+      <div class="layer-desc">Independent scan: K⁺, SpO2, ECG, disposition — must appear in summary</div>
+    </div>
+  </div>
+
+  <div class="section-label">PIPELINE OUTCOMES</div>
+  <div class="bottom-row">
+    <div class="outcome-box outcome-pass">
+      <div class="outcome-icon">✅</div>
+      <div class="outcome-text">
+        <div class="title">AUTO-APPROVED</div>
+        <div class="desc">Summary accurate — 0 flags · 0 false positives on TC-001</div>
+      </div>
+    </div>
+    <div class="outcome-box outcome-fix">
+      <div class="outcome-icon">🔧</div>
+      <div class="outcome-text">
+        <div class="title">CORRECTED · PENDING AUDIT</div>
+        <div class="desc">AI proposes fix · physician signs off · TC-002, 003, 004, 007</div>
+      </div>
+    </div>
+    <div class="outcome-box outcome-human">
+      <div class="outcome-icon">👨‍⚕️</div>
+      <div class="outcome-text">
+        <div class="title">ESCALATED TO HUMAN</div>
+        <div class="desc">Action Center physician review · TC-002, 005, 006</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="maestro-note">
+    ⚠️ <strong>Maestro publish:</strong> Solution 8 fully modeled and validated (0 issues). Publish blocked by known UiPath staging bug (June 2026 · community forum documented). Individual agents deployed and active.
+  </div>
+</main>
+</body>
+</html>

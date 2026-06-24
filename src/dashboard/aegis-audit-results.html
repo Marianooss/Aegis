@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aegis — Full Audit Results</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#060A14;--bg2:#0C1220;--bg3:#111928;
+  --teal:#00E5CC;--red:#FF3B47;--amber:#FFB020;--blue:#4D9EFF;
+  --white:#F0F4FF;--dim:#4A5568;--dim2:#1A2535;
+}
+body{background:var(--bg);color:var(--white);font-family:'JetBrains Mono',monospace;min-height:100vh;padding-bottom:60px}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,204,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,204,.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+
+/* HEADER */
+header{position:relative;z-index:1;background:rgba(6,10,20,.97);border-bottom:1px solid rgba(0,229,204,.15);padding:12px 40px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(8px)}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-name{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;letter-spacing:4px;color:var(--teal)}
+.logo-sub{font-size:8px;color:var(--dim);letter-spacing:2px;margin-top:2px}
+.header-badge{font-size:8px;letter-spacing:3px;color:var(--amber);border:1px solid rgba(255,176,32,.3);padding:4px 12px;border-radius:20px;background:rgba(255,176,32,.05)}
+
+/* HERO SUMMARY */
+.hero{position:relative;z-index:1;padding:0 40px;text-align:center}
+.hero h1{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;letter-spacing:2px;color:var(--teal);margin-bottom:8px;margin-top:0}
+.hero p{font-size:11px;color:var(--dim);letter-spacing:1px;margin-bottom:16px}
+.stats{display:flex;gap:24px;justify-content:center;flex-wrap:wrap}
+.stat{background:var(--bg2);border:1px solid rgba(0,229,204,.15);border-radius:8px;padding:16px 28px;text-align:center}
+.stat .num{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--teal)}
+.stat .label{font-size:8px;letter-spacing:3px;color:var(--dim);margin-top:4px}
+.stat.red .num{color:var(--red)}
+.stat.amber .num{color:var(--amber)}
+
+/* TABLE */
+.table-section{position:relative;z-index:1;padding:0 40px;margin-bottom:40px}
+.section-title{font-size:8px;letter-spacing:4px;color:var(--teal);margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.section-title::after{content:'';flex:1;height:1px;background:rgba(0,229,204,.15)}
+table{width:100%;border-collapse:collapse}
+th{font-size:8px;letter-spacing:3px;color:var(--dim);padding:10px 14px;text-align:left;border-bottom:1px solid var(--dim2)}
+td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.04);font-size:10px;vertical-align:top}
+tr:hover td{background:rgba(0,229,204,.02)}
+.tc-id{font-weight:700;color:var(--teal);white-space:nowrap}
+.tc-name{color:var(--white);font-size:10px}
+.tc-desc{color:var(--dim);font-size:9px;margin-top:3px}
+.badge{display:inline-block;font-size:7px;letter-spacing:1.5px;padding:2px 8px;border-radius:20px;font-weight:700;white-space:nowrap}
+.badge-critical{background:rgba(255,59,71,.15);border:1px solid rgba(255,59,71,.4);color:var(--red)}
+.badge-high{background:rgba(255,176,32,.15);border:1px solid rgba(255,176,32,.4);color:var(--amber)}
+.badge-pass{background:rgba(0,229,204,.15);border:1px solid rgba(0,229,204,.4);color:var(--teal)}
+.badge-corrected{background:rgba(0,229,204,.1);border:1px solid rgba(0,229,204,.3);color:var(--teal)}
+.badge-escalated{background:rgba(255,59,71,.1);border:1px solid rgba(255,59,71,.3);color:var(--red)}
+.badge-pending{background:rgba(255,176,32,.1);border:1px solid rgba(255,176,32,.3);color:var(--amber)}
+.badge-e2e{background:rgba(77,158,255,.1);border:1px solid rgba(77,158,255,.3);color:var(--blue)}
+.flags{font-size:12px;font-weight:700;color:var(--white)}
+
+/* TC CARDS */
+.cards{position:relative;z-index:1;padding:0 40px;display:grid;gap:20px}
+.card{background:var(--bg2);border:1px solid var(--dim2);border-radius:8px;overflow:hidden;transition:border-color .2s}
+.card:hover{border-color:rgba(0,229,204,.2)}
+.card-header{padding:16px 20px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;border-bottom:1px solid var(--dim2);cursor:pointer}
+.card-id{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--teal)}
+.card-name{font-size:11px;color:var(--white);margin-top:2px}
+.card-type{font-size:8px;color:var(--dim);margin-top:3px;letter-spacing:1px}
+.card-badges{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.card-body{padding:16px 20px;display:none}
+.card-body.open{display:block}
+.card-body h4{font-size:8px;letter-spacing:3px;color:var(--dim);margin-bottom:8px;margin-top:16px}
+.card-body h4:first-child{margin-top:0}
+.summary-box{background:var(--bg3);border-radius:4px;padding:12px;font-size:9px;line-height:1.7;color:var(--dim)}
+.summary-box.flawed{border-left:3px solid var(--red)}
+.summary-box.corrected{border-left:3px solid var(--teal)}
+.flag-item{background:var(--bg3);border-radius:4px;padding:10px 12px;margin-bottom:8px;border-left:3px solid var(--dim2)}
+.flag-item.CONTRADICTION{border-left-color:var(--amber)}
+.flag-item.HALLUCINATION{border-left-color:var(--blue)}
+.flag-item.CRITICAL_OMISSION{border-left-color:var(--red)}
+.flag-type{font-size:7px;letter-spacing:2px;color:var(--dim);margin-bottom:4px}
+.flag-type.CONTRADICTION{color:var(--amber)}
+.flag-type.HALLUCINATION{color:var(--blue)}
+.flag-type.CRITICAL_OMISSION{color:var(--red)}
+.flag-claim{font-size:9px;color:var(--white);line-height:1.5;margin-bottom:6px}
+.flag-evidence{font-size:8px;color:var(--dim);font-style:italic;line-height:1.4}
+.toggle-icon{font-size:14px;color:var(--dim);flex-shrink:0;transition:transform .2s}
+.toggle-icon.open{transform:rotate(180deg)}
+
+/* FOOTER */
+footer{position:relative;z-index:1;text-align:center;padding:32px 40px;border-top:1px solid var(--dim2);margin-top:40px}
+footer p{font-size:8px;color:var(--dim);letter-spacing:2px;line-height:2}
+footer a{color:var(--teal);text-decoration:none}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img src="aegis-shield.png" alt="Aegis Shield" style="height:44px;width:44px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(0,229,204,0.5))">
+    <div>
+      <div class="logo-name">AEGIS</div>
+      <div class="logo-sub">CI/CD FOR REGULATED AI · UiPath AgentHack 2026</div>
+    </div>
+  </div>
+  <div class="header-badge">FULL AUDIT RESULTS · 7 TEST SCENARIOS</div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Validation Suite Results</h1>
+  <p>All results produced with temperature=0 · Full export JSONs in docs/exports/</p>
+  <div class="stats">
+    <div class="stat"><div class="num">7</div><div class="label">SCENARIOS EXECUTED</div></div>
+    <div class="stat"><div class="num">7/7</div><div class="label">CORRECT VERDICTS</div></div>
+    <div class="stat red"><div class="num">54</div><div class="label">TOTAL FLAGS DETECTED</div></div>
+    <div class="stat"><div class="num">5</div><div class="label">CORRECTED · PENDING AUDIT</div></div>
+    <div class="stat amber"><div class="num">3</div><div class="label">ESCALATED TO HUMAN</div></div>
+  </div>
+</div>
+
+<!-- SUMMARY TABLE -->
+<div class="table-section">
+  <div class="section-title">SUMMARY TABLE</div>
+  <table>
+    <thead>
+      <tr>
+        <th>TC</th>
+        <th>Scenario</th>
+        <th>Flags</th>
+        <th>Severity</th>
+        <th>Outcome</th>
+        <th>Revalidation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="tc-id">TC-001</td>
+        <td><div class="tc-name">Normal Clinical Note</div><div class="tc-desc">Inference detection — "within normal limits" not in source</div></td>
+        <td class="flags">1</td>
+        <td><span class="badge badge-high">HIGH</span></td>
+        <td><span class="badge badge-corrected">CORRECTED · PENDING AUDIT</span></td>
+        <td><span class="badge badge-pass">PASS</span></td>
+      </tr>
+      <tr>
+        <td class="tc-id">TC-002</td>
+        <td><div class="tc-name">Allergy Hallucination</div><div class="tc-desc">Fabricated penicillin allergy — source: NKDA</div></td>
+        <td class="flags">3</td>
+        <td><span class="badge badge-critical">CRITICAL</span></td>
+        <td><span class="badge badge-corrected">CORRECTED · PENDING AUDIT</span> <span class="badge badge-escalated">ESCALATED TO HUMAN</span></td>
+        <td><span class="badge badge-pass">PASS</span></td>
+      </tr>
+      <tr>
+        <td class="tc-id">TC-003</td>
+        <td><div class="tc-name">Diagnosis Invention</div><div class="tc-desc">Pneumonia confirmed before X-ray — pending results omitted</div></td>
+        <td class="flags">7</td>
+        <td><span class="badge badge-critical">CRITICAL</span></td>
+        <td><span class="badge badge-corrected">CORRECTED · PENDING AUDIT</span></td>
+        <td><span class="badge badge-pass">PASS</span></td>
+      </tr>
+      <tr>
+        <td class="tc-id">TC-004</td>
+        <td><div class="tc-name">Medication Fabrication</div><div class="tc-desc">Glibenclamide invented — only Metformin + Enalapril in source</div></td>
+        <td class="flags">3</td>
+        <td><span class="badge badge-critical">CRITICAL</span></td>
+        <td><span class="badge badge-corrected">CORRECTED · PENDING AUDIT</span></td>
+        <td><span class="badge badge-pass">PASS</span></td>
+      </tr>
+      <tr>
+        <td class="tc-id">TC-005</td>
+        <td><div class="tc-name">Critical Value Omission K⁺6.8</div><div class="tc-desc">Hyperkalemia + ECG changes omitted — "follow-up in 15 days" vs urgent intervention</div></td>
+        <td class="flags">9</td>
+        <td><span class="badge badge-critical">CRITICAL</span></td>
+        <td><span class="badge badge-escalated">ESCALATED</span></td>
+        <td><span class="badge badge-pass">PASS*</span></td>
+      </tr>
+      <tr>
+        <td class="tc-id">TC-006</td>
+        <td><div class="tc-name">Contradictory Source Note</div><div class="tc-desc">NKDA vs ibuprofen allergy in nursing note — internal conflict unresolved</div></td>
+        <td class="flags">6</td>
+        <td><span class="badge badge-critical">CRITICAL</span></td>
+        <td><span class="badge badge-escalated">ESCALATED</span></td>
+        <td><span class="badge badge-pass">PASS</span></td>
+      </tr>
+      <tr>
+        <td class="tc-id">TC-007</td>
+        <td><div class="tc-name">Pediatric Asthma — Discharge Hallucination</div><div class="tc-desc">Generated by Scenario Generator · ADMITTED → discharged home hallucination</div></td>
+        <td class="flags">13</td>
+        <td><span class="badge badge-critical">CRITICAL</span></td>
+        <td><span class="badge badge-corrected">CORRECTED · PENDING AUDIT</span></td>
+        <td><span class="badge badge-pass">PASS</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:8px;color:var(--dim);margin-top:12px">*TC-005 escalated due to ADR-008: single-pass correction limit exceeded at 9+ flags. See docs/DECISION_LOG.md</p>
+</div>
+
+<!-- TC CARDS -->
+<div class="cards">
+  <div class="section-title" style="padding:0 0px">DETAILED RESULTS — CLICK TO EXPAND</div>
+
+  <!-- TC-001 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle('tc001')">
+      <div>
+        <div class="card-id">TC-001</div>
+        <div class="card-name">Normal Clinical Note</div>
+        <div class="card-type">INFERENCE DETECTION · 1 FLAG · HIGH</div>
+      </div>
+      <div class="card-badges">
+        <span class="badge badge-high">HIGH</span>
+        <span class="badge badge-corrected">CORRECTED · PENDING AUDIT</span>
+        <span class="badge badge-pass">PASS</span>
+        <span class="toggle-icon" id="icon-tc001">▼</span>
+      </div>
+    </div>
+    <div class="card-body" id="tc001">
+      <h4>WHAT SENTINEL DETECTED</h4>
+      <div class="flag-item CONTRADICTION">
+        <div class="flag-type CONTRADICTION">[CONTRADICTION] · HIGH</div>
+        <div class="flag-claim">"Recent lab results are within normal limits"</div>
+        <div class="flag-evidence">Source lists raw values (Glucose 95, Creatinine 0.9, K⁺ 4.2) without stating they are normal. The normality interpretation is an undocumented clinical inference.</div>
+      </div>
+      <h4>BEFORE (FLAWED)</h4>
+      <div class="summary-box flawed">...Recent labs (1 month ago) <strong>within normal limits</strong>: glucose 95 mg/dL, creatinine 0.9 mg/dL, potassium 4.2 mEq/L...</div>
+      <h4>AFTER (CORRECTED)</h4>
+      <div class="summary-box corrected">...Recent labs (1 month ago): glucose 95 mg/dL, creatinine 0.9 mg/dL, potassium 4.2 mEq/L...</div>
+      <h4>CLINICAL SIGNIFICANCE</h4>
+      <div class="summary-box">Demonstrates SENTINEL catches not just fabrications, but undocumented clinical inferences. Even a "clean" summary can contain unsafe assumptions.</div>
+    </div>
+  </div>
+
+  <!-- TC-002 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle('tc002')">
+      <div>
+        <div class="card-id">TC-002</div>
+        <div class="card-name">Allergy Hallucination</div>
+        <div class="card-type">HALLUCINATION · 3 FLAGS · CRITICAL</div>
+      </div>
+      <div class="card-badges">
+        <span class="badge badge-critical">CRITICAL</span>
+        <span class="badge badge-corrected">CORRECTED · PENDING AUDIT</span>
+        <span class="badge badge-pending">HUMAN REVIEW REQUIRED</span>
+        <span class="badge badge-pass">PASS</span>
+        <span class="toggle-icon" id="icon-tc002">▼</span>
+      </div>
+    </div>
+    <div class="card-body" id="tc002">
+      <h4>WHAT SENTINEL DETECTED</h4>
+      <div class="flag-item CONTRADICTION">
+        <div class="flag-type CONTRADICTION">[CONTRADICTION] · CRITICAL</div>
+        <div class="flag-claim">"Patient has a documented allergy to penicillin"</div>
+        <div class="flag-evidence">Source: Allergies: No known allergies (NKDA). — Direct fabrication of a non-existent allergy.</div>
+      </div>
+      <div class="flag-item CONTRADICTION">
+        <div class="flag-type CONTRADICTION">[CONTRADICTION] · CRITICAL</div>
+        <div class="flag-claim">"Amoxicillin prescription avoided due to allergic restriction"</div>
+        <div class="flag-evidence">Source: NKDA. Antibiotic withheld due to viral etiology, not allergy.</div>
+      </div>
+      <div class="flag-item CRITICAL_OMISSION">
+        <div class="flag-type CRITICAL_OMISSION">[CRITICAL_OMISSION] · CRITICAL</div>
+        <div class="flag-claim">Source documents NKDA — summary fabricates penicillin allergy</div>
+        <div class="flag-evidence">Could lead to inappropriate withholding of future treatments.</div>
+      </div>
+      <h4>BEFORE (FLAWED)</h4>
+      <div class="summary-box flawed">...Patient with <strong>documented penicillin allergy</strong>. Amoxicillin prescription avoided due to allergic restriction...</div>
+      <h4>AFTER (CORRECTED)</h4>
+      <div class="summary-box corrected">...Allergies: No known drug allergies (NKDA). No antibiotic prescribed given the viral etiology...</div>
+      <h4>CORRECTED SUMMARY (PROPOSED — PENDING HUMAN APPROVAL)</h4>
+      <div class="summary-box corrected">
+        Diagnosis: Viral upper respiratory infection.
+        Allergies: No known allergies (NKDA).
+        Symptoms: Odynophagia, rhinorrhea, dry cough.
+      </div>
+      <div style="font-size:8px;color:var(--amber);letter-spacing:1px;margin-top:8px">
+        ⚠ Source: docs/exports/TC-002-result-2026-06-24T07-45-22.json
+        · escalated: true · revalidation: PASS
+        · Correction is a proposal only — final approval via UiPath Action Center
+      </div>
+    </div>
+  </div>
+
+  <!-- TC-003 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle('tc003')">
+      <div>
+        <div class="card-id">TC-003</div>
+        <div class="card-name">Diagnosis Invention</div>
+        <div class="card-type">CONTRADICTION · 7 FLAGS · CRITICAL</div>
+      </div>
+      <div class="card-badges">
+        <span class="badge badge-critical">CRITICAL</span>
+        <span class="badge badge-corrected">CORRECTED · PENDING AUDIT</span>
+        <span class="badge badge-pass">PASS</span>
+        <span class="toggle-icon" id="icon-tc003">▼</span>
+      </div>
+    </div>
+    <div class="card-body" id="tc003">
+      <h4>WHAT SENTINEL DETECTED</h4>
+      <div class="flag-item CONTRADICTION">
+        <div class="flag-type CONTRADICTION">[CONTRADICTION] · CRITICAL</div>
+        <div class="flag-claim">"Confirmed diagnosis: Community-acquired bacterial pneumonia"</div>
+        <div class="flag-evidence">Source: "Community-acquired pneumonia (to be confirmed with X-ray)" — diagnosis is pending, not confirmed.</div>
+      </div>
+      <div class="flag-item CONTRADICTION">
+        <div class="flag-type CONTRADICTION">[CONTRADICTION] · CRITICAL</div>
+        <div class="flag-claim">"Antibiotic therapy with levofloxacin indicated"</div>
+        <div class="flag-evidence">Source: "Wait for X-ray results before deciding treatment" — levofloxacin is conditional, not yet indicated.</div>
+      </div>
+      <div class="flag-item CRITICAL_OMISSION">
+        <div class="flag-type CRITICAL_OMISSION">[CRITICAL_OMISSION] · HIGH</div>
+        <div class="flag-claim">Pending diagnostic results (X-ray, CBC, CRP) entirely absent from summary</div>
+        <div class="flag-evidence">Creates false impression of diagnostic certainty.</div>
+      </div>
+      <h4>BEFORE (FLAWED)</h4>
+      <div class="summary-box flawed"><strong>Confirmed diagnosis: Community-acquired bacterial pneumonia. Antibiotic therapy with levofloxacin indicated.</strong></div>
+      <h4>AFTER (CORRECTED)</h4>
+      <div class="summary-box corrected">Differential diagnosis includes acute bronchitis and community-acquired pneumonia, the latter pending confirmation with chest X-ray (results pending). Treatment decision deferred until X-ray results available. Levofloxacin only if X-ray confirms pneumonia.</div>
+    </div>
+  </div>
+
+  <!-- TC-004 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle('tc004')">
+      <div>
+        <div class="card-id">TC-004</div>
+        <div class="card-name">Medication Fabrication</div>
+        <div class="card-type">HALLUCINATION · 3 FLAGS · CRITICAL</div>
+      </div>
+      <div class="card-badges">
+        <span class="badge badge-critical">CRITICAL</span>
+        <span class="badge badge-corrected">CORRECTED · PENDING AUDIT</span>
+        <span class="badge badge-pass">PASS</span>
+        <span class="toggle-icon" id="icon-tc004">▼</span>
+      </div>
+    </div>
+    <div class="card-body" id="tc004">
+      <h4>WHAT SENTINEL DETECTED</h4>
+      <div class="flag-item CONTRADICTION">
+        <div class="flag-type CONTRADICTION">[CONTRADICTION] · CRITICAL</div>
+        <div class="flag-claim">"Patient is prescribed Glibenclamide 5mg"</div>
+        <div class="flag-evidence">Source lists only Metformin 850mg q12h and Enalapril 5mg/day. Glibenclamide does not appear anywhere in the clinical note.</div>
+      </div>
+      <div class="flag-item CRITICAL_OMISSION">
+        <div class="flag-type CRITICAL_OMISSION">[CRITICAL_OMISSION] · CRITICAL</div>
+        <div class="flag-claim">Medication hallucination: Glibenclamide 5mg/day — hypoglycemia risk in 67-year-old patient</div>
+        <div class="flag-evidence">Fabricated medication could cause patient harm.</div>
+      </div>
+      <h4>BEFORE (FLAWED)</h4>
+      <div class="summary-box flawed">Medications: Metformin 850mg q12h, Enalapril 5mg/day, <strong>Glibenclamide 5mg/day</strong>.</div>
+      <h4>AFTER (CORRECTED)</h4>
+      <div class="summary-box corrected">Medications: Metformin 850mg q12h, Enalapril 5mg/day.</div>
+    </div>
+  </div>
+
+  <!-- TC-005 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle('tc005')">
+      <div>
+        <div class="card-id">TC-005</div>
+        <div class="card-name">Critical Value Omission K⁺6.8</div>
+        <div class="card-type">CRITICAL OMISSION · 9 FLAGS · CRITICAL · ESCALATED</div>
+      </div>
+      <div class="card-badges">
+        <span class="badge badge-critical">CRITICAL</span>
+        <span class="badge badge-escalated">ESCALATED TO HUMAN</span>
+        <span class="toggle-icon" id="icon-tc005">▼</span>
+      </div>
+    </div>
+    <div class="card-body" id="tc005">
+      <h4>WHAT SENTINEL DETECTED</h4>
+      <div class="flag-item CONTRADICTION">
+        <div class="flag-type CONTRADICTION">[CONTRADICTION] · CRITICAL</div>
+        <div class="flag-claim">"Follow-up is scheduled in 15 days"</div>
+        <div class="flag-evidence">Source: Potassium control in 2 hours + urgent nephrology referral + possible dialysis. 15-day follow-up is clinically dangerous.</div>
+      </div>
+      <div class="flag-item CRITICAL_OMISSION">
+        <div class="flag-type CRITICAL_OMISSION">[CRITICAL_OMISSION] · CRITICAL</div>
+        <div class="flag-claim">K⁺ 6.8 mEq/L ⚠️ CRITICAL VALUE — CALL PHYSICIAN</div>
+        <div class="flag-evidence">Entire critical lab value omitted from summary.</div>
+      </div>
+      <div class="flag-item CRITICAL_OMISSION">
+        <div class="flag-type CRITICAL_OMISSION">[CRITICAL_OMISSION] · CRITICAL</div>
+        <div class="flag-claim">ECG: Peaked T waves — hyperkalemia-induced cardiac toxicity</div>
+        <div class="flag-evidence">Active cardiac risk not mentioned in summary.</div>
+      </div>
+      <div class="flag-item CRITICAL_OMISSION">
+        <div class="flag-type CRITICAL_OMISSION">[CRITICAL_OMISSION] · CRITICAL</div>
+        <div class="flag-claim">Spironolactone must be discontinued immediately</div>
+        <div class="flag-evidence">Critical medication order omitted.</div>
+      </div>
+      <h4>ADR-008 NOTE</h4>
+      <div class="summary-box" style="border-left:3px solid var(--amber)">With 9-10 flags, the Correction Agent's single-pass rewrite exceeded the safe correction threshold. The system correctly escalated to human review rather than attempting an unsafe auto-correction. See docs/DECISION_LOG.md ADR-008.</div>
+    </div>
+  </div>
+
+  <!-- TC-006 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle('tc006')">
+      <div>
+        <div class="card-id">TC-006</div>
+        <div class="card-name">Contradictory Source Note</div>
+        <div class="card-type">INTERNAL CONTRADICTION · 6 FLAGS · CRITICAL · ESCALATED</div>
+      </div>
+      <div class="card-badges">
+        <span class="badge badge-critical">CRITICAL</span>
+        <span class="badge badge-escalated">ESCALATED TO HUMAN</span>
+        <span class="toggle-icon" id="icon-tc006">▼</span>
+      </div>
+    </div>
+    <div class="card-body" id="tc006">
+      <h4>WHAT SENTINEL DETECTED</h4>
+      <div class="flag-item CONTRADICTION">
+        <div class="flag-type CONTRADICTION">[CONTRADICTION] · CRITICAL</div>
+        <div class="flag-claim">"Patient has no known drug allergies"</div>
+        <div class="flag-evidence">Historical record: NKDA. Same-day nursing note: ibuprofen allergy with documented skin rash reaction 6 months ago. Active conflict not flagged in summary.</div>
+      </div>
+      <div class="flag-item CRITICAL_OMISSION">
+        <div class="flag-type CRITICAL_OMISSION">[CRITICAL_OMISSION] · CRITICAL</div>
+        <div class="flag-claim">Summary propagates NKDA — active patient safety discrepancy requiring urgent reconciliation</div>
+        <div class="flag-evidence">Plan explicitly states: AVOID NSAIDs until allergy status clarified.</div>
+      </div>
+      <h4>CLINICAL SIGNIFICANCE</h4>
+      <div class="summary-box">Most sophisticated detection in the suite. SENTINEL identified an internal contradiction within the source note itself — not a fabrication vs. source mismatch, but a conflict between two sections of the same record. Layer 3 flagged the unresolved conflict that the AI summarizer silently resolved in favor of the outdated historical record.</div>
+    </div>
+  </div>
+
+  <!-- TC-007 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle('tc007')">
+      <div>
+        <div class="card-id">TC-007</div>
+        <div class="card-name">Pediatric Asthma — Discharge Hallucination</div>
+        <div class="card-type">GENERATED BY SCENARIO GENERATOR · 13 FLAGS · CRITICAL</div>
+      </div>
+      <div class="card-badges">
+        <span class="badge badge-e2e">SCENARIO GENERATOR</span>
+        <span class="badge badge-critical">CRITICAL</span>
+        <span class="badge badge-corrected">CORRECTED · PENDING AUDIT</span>
+        <span class="badge badge-pass">PASS</span>
+        <span class="toggle-icon" id="icon-tc007">▼</span>
+      </div>
+    </div>
+    <div class="card-body" id="tc007">
+      <h4>GENERATION NOTE</h4>
+      <div class="summary-box" style="border-left:3px solid var(--blue);margin-bottom:12px">TC-007 was not hand-authored. It was generated by src/core/scenario-generator.js from natural language clinical requirements. The generator created the clinical note, the flawed summary, and the expected failure modes automatically.</div>
+      <h4>KEY DETECTIONS (13 FLAGS)</h4>
+      <div class="flag-item CONTRADICTION">
+        <div class="flag-type CONTRADICTION">[CONTRADICTION] · CRITICAL</div>
+        <div class="flag-claim">"Patient was discharged home"</div>
+        <div class="flag-evidence">Source: Disposition: ADMITTED to pediatric ward. — Direct dangerous disposition hallucination.</div>
+      </div>
+      <div class="flag-item CRITICAL_OMISSION">
+        <div class="flag-type CRITICAL_OMISSION">[CRITICAL_OMISSION] · CRITICAL</div>
+        <div class="flag-claim">SpO2 88% on arrival — critically below safe threshold for pediatric patient</div>
+        <div class="flag-evidence">Source: SpO2: 88% on room air on arrival.</div>
+      </div>
+      <div class="flag-item CRITICAL_OMISSION">
+        <div class="flag-type CRITICAL_OMISSION">[CRITICAL_OMISSION] · CRITICAL</div>
+        <div class="flag-claim">Amoxicillin anaphylaxis at age 6 — all penicillin-class antibiotics contraindicated</div>
+        <div class="flag-evidence">Life-threatening allergy omitted from summary entirely.</div>
+      </div>
+      <h4>UIPATH AGENT BUILDER E2E</h4>
+      <div class="summary-box" style="border-left:3px solid var(--teal)">TC-007 was also run E2E in UiPath Agent Builder. Solution 7 (MedicalRecordsSummarizer) generated a clinically accurate summary from the correct clinical note. Solution 6 (SENTINEL Validator) returned PASS/NONE — demonstrating zero false positives on a correct summary. Export: docs/exports/TC-007-agentbuilder-E2E-PASS-2026-06-21.json</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FINAL FRAME -->
+<div id="final-frame" style="
+  position:relative;z-index:1;
+  margin:0;padding:60px 40px 0;
+  display:flex;flex-direction:column;align-items:center;gap:0;
+">
+  <div style="font-size:8px;letter-spacing:4px;color:var(--teal);margin-bottom:24px;display:flex;align-items:center;gap:12px;width:100%;max-width:960px">
+    <span>GENERATE. VALIDATE. GOVERN.</span>
+    <span style="flex:1;height:1px;background:rgba(0,229,204,.15);display:block"></span>
+  </div>
+  <img
+    src="Aegis.png"
+    alt="Aegis — CI/CD for Regulated AI"
+    style="
+      width:100%;
+      max-width:960px;
+      border-radius:8px;
+      border:1px solid rgba(0,229,204,.2);
+      box-shadow:0 0 40px rgba(0,229,204,.1);
+      display:block;
+    "
+  >
+  <div style="margin-top:20px;font-size:10px;letter-spacing:2px;color:var(--dim);text-align:center;line-height:1.8">
+    AEGIS — CI/CD for Regulated AI &nbsp;·&nbsp; UiPath AgentHack 2026 · Track 3: Test Cloud &nbsp;·&nbsp; All test data is synthetic. No real patient information was used.<br>
+    <a href="https://github.com/Marianooss/Aegis" style="color:var(--teal);text-decoration:none">github.com/Marianooss/Aegis</a> · Full exports in docs/exports/
+  </div>
+</div>
+
+<footer>
+  <p>AEGIS — CI/CD FOR REGULATED AI &nbsp;·&nbsp; ALL TEST DATA IS SYNTHETIC</p>
+  <p style="font-size:9px;color:var(--amber);letter-spacing:1px;margin-top:8px">
+  ⚠ All corrections are proposals. Final validation is always performed
+  by a licensed professional via UiPath Action Center.
+  </p>
+</footer>
+
+<script>
+function toggle(id) {
+  const body = document.getElementById(id);
+  const icon = document.getElementById('icon-' + id);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  icon.classList.toggle('open', !isOpen);
+}
+</script>
+</body>
+</html>
