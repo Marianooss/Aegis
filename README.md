@@ -217,6 +217,8 @@ All results produced with `temperature=0`. Full export JSONs in `docs/exports/`.
 
 *TC-005 with 10 flags produced revalidation FAIL in one run — documented in `docs/DECISION_LOG.md` ADR-008 (single-pass correction limit on high-complexity cases).
 
+**Note on exports:** Exports committed prior to 2026-06-24 show `revalidation.overall_severity` as CRITICAL (pre-fix). The `server.js` fix (commit `6866522`) corrects this to NONE for PASS revalidations on all new runs.
+
 **TC-001 note:** Borderline case — the summarizer added "within normal limits" as an interpretive conclusion not explicitly stated in the source note. SENTINEL correctly flagged this as an unsupported inference (CONTRADICTION/HIGH). Escalates per ADR-008 (hasCritical || hasHigh). The corrected summary removes the interpretation and presents raw lab values only. This demonstrates SENTINEL detecting not just fabrications, but undocumented clinical inferences.
 
 ### Notable detections
@@ -348,7 +350,7 @@ and Action Center.
   "verdict": "FAIL",
   "overall_severity": "CRITICAL",
   "escalate_to_human": true,
-  "breakdown": { "hallucinations": 0, "contradictions": 2, "critical_omissions": 1 }
+  "breakdown": { "hallucinations": 3, "contradictions": 2, "critical_omissions": 1 }
 }
 ```
 
